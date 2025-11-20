@@ -218,7 +218,7 @@ class WP_Hreflang_Manager {
         wp_enqueue_script(
             'wp-hreflang-admin',
             WP_HREFLANG_PLUGIN_URL . 'admin/js/admin-script.js',
-            array( 'jquery', 'wp-color-picker' ),
+            array( 'jquery', 'jquery-ui-sortable', 'wp-color-picker' ),
             WP_HREFLANG_VERSION,
             true
         );
