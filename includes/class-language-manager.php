@@ -78,6 +78,9 @@ class WP_Hreflang_Language_Manager {
         add_action( 'wp_ajax_switch_language', array( $this, 'ajax_switch_language' ) );
         add_action( 'wp_ajax_nopriv_switch_language', array( $this, 'ajax_switch_language' ) );
 
+        // AJAX handler for post duplication
+        add_action( 'wp_ajax_wp_hreflang_duplicate_post', array( $this, 'ajax_duplicate_post' ) );
+
         // Add language switcher to menu if configured
         add_filter( 'wp_nav_menu_items', array( $this, 'add_switcher_to_menu' ), 10, 2 );
     }
@@ -464,16 +467,29 @@ class WP_Hreflang_Language_Manager {
             $posts = get_posts( $args );
 
             if ( empty( $posts ) ) {
-                // No posts available in this language
-                echo '<select name="wp_hreflang_translations[' . esc_attr( $lang_code ) . ']" class="widefat" disabled>';
+                // No posts available in this language - show duplicate button
+                echo '<div style="display: flex; gap: 8px; align-items: center;">';
+                echo '<select name="wp_hreflang_translations[' . esc_attr( $lang_code ) . ']" class="widefat" disabled style="flex: 1;">';
                 echo '<option value="">' . sprintf( __( 'No %s posts available yet', 'wp-hreflang-manager' ), $language['name'] ) . '</option>';
                 echo '</select>';
+
+                // Duplicate button
+                echo '<button type="button" class="button button-primary wp-hreflang-duplicate-btn"
+                             data-post-id="' . esc_attr( $post->ID ) . '"
+                             data-lang-code="' . esc_attr( $lang_code ) . '"
+                             data-lang-name="' . esc_attr( $language['name'] ) . '"
+                             style="white-space: nowrap; flex-shrink: 0;">
+                        <span class="dashicons dashicons-admin-page" style="margin-top: 3px;"></span> '
+                        . sprintf( __( 'Duplicate to %s', 'wp-hreflang-manager' ), $language['name'] ) .
+                      '</button>';
+                echo '</div>';
+
                 echo '<p class="description" style="margin-top: 3px; font-size: 11px;">';
                 echo sprintf(
-                    __( 'Create a new %1$s post and set its language to link it here.', 'wp-hreflang-manager' ),
+                    __( 'Click "Duplicate" to copy this post with all content and images to %s, or create a new blank post.', 'wp-hreflang-manager' ),
                     '<strong>' . esc_html( $language['name'] ) . '</strong>'
                 );
-                echo ' <a href="' . esc_url( admin_url( 'post-new.php?post_type=' . $post->post_type ) ) . '" target="_blank">' . __( 'Create new post', 'wp-hreflang-manager' ) . '</a>';
+                echo ' <a href="' . esc_url( admin_url( 'post-new.php?post_type=' . $post->post_type ) ) . '" target="_blank" style="text-decoration: none;">' . __( 'Create blank', 'wp-hreflang-manager' ) . '</a>';
                 echo '</p>';
             } else {
                 // Posts available - show dropdown
@@ -508,6 +524,66 @@ class WP_Hreflang_Language_Manager {
         }
 
         echo '</div>';
+
+        // Add inline JavaScript for duplicate functionality
+        ?>
+        <script>
+        (function() {
+            console.log('🎯 Metabox duplicate script loaded');
+
+            // Handle duplicate button clicks
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.wp-hreflang-duplicate-btn')) {
+                    e.preventDefault();
+                    const btn = e.target.closest('.wp-hreflang-duplicate-btn');
+
+                    const postId = btn.dataset.postId;
+                    const langCode = btn.dataset.langCode;
+                    const langName = btn.dataset.langName;
+
+                    if (!confirm('Duplicate this post to ' + langName + '?\n\nThis will copy all content, images, and metadata.')) {
+                        return;
+                    }
+
+                    const originalText = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="dashicons dashicons-update-alt" style="animation: rotation 2s infinite linear; margin-top: 3px;"></span> Duplicating...';
+
+                    fetch('<?php echo admin_url( 'admin-ajax.php' ); ?>', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({
+                            action: 'wp_hreflang_duplicate_post',
+                            nonce: '<?php echo wp_create_nonce( 'wp_hreflang_admin_nonce' ); ?>',
+                            post_id: postId,
+                            lang_code: langCode
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('✅ ' + data.data.message + '\n\nOpening new post for editing...');
+                            window.open(data.data.edit_url, '_blank');
+                            location.reload();
+                        } else {
+                            alert('❌ Error: ' + (data.data.message || 'Unknown error'));
+                            btn.disabled = false;
+                            btn.innerHTML = originalText;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('❌ Network error');
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                    });
+                }
+            });
+        })();
+        </script>
+        <?php
     }
 
     /**
@@ -637,5 +713,96 @@ class WP_Hreflang_Language_Manager {
         }
 
         return $items;
+    }
+
+    /**
+     * AJAX handler: Duplicate post to another language
+     */
+    public function ajax_duplicate_post() {
+        // Check nonce
+        check_ajax_referer( 'wp_hreflang_admin_nonce', 'nonce' );
+
+        // Check permissions
+        if ( ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( array( 'message' => __( 'Permission denied', 'wp-hreflang-manager' ) ) );
+        }
+
+        $post_id = isset( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : 0;
+        $target_lang = isset( $_POST['lang_code'] ) ? sanitize_text_field( $_POST['lang_code'] ) : '';
+
+        if ( ! $post_id || ! $target_lang ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid parameters', 'wp-hreflang-manager' ) ) );
+        }
+
+        // Get original post
+        $original_post = get_post( $post_id );
+        if ( ! $original_post ) {
+            wp_send_json_error( array( 'message' => __( 'Post not found', 'wp-hreflang-manager' ) ) );
+        }
+
+        // Create duplicate post
+        $new_post_data = array(
+            'post_title'    => $original_post->post_title,
+            'post_content'  => $original_post->post_content,
+            'post_excerpt'  => $original_post->post_excerpt,
+            'post_status'   => 'draft', // Create as draft for review
+            'post_type'     => $original_post->post_type,
+            'post_author'   => get_current_user_id(),
+        );
+
+        // Insert new post
+        $new_post_id = wp_insert_post( $new_post_data );
+
+        if ( is_wp_error( $new_post_id ) ) {
+            wp_send_json_error( array( 'message' => __( 'Failed to create post', 'wp-hreflang-manager' ) ) );
+        }
+
+        // Set language for new post
+        update_post_meta( $new_post_id, '_wp_hreflang_language', $target_lang );
+
+        // Copy featured image
+        $thumbnail_id = get_post_thumbnail_id( $post_id );
+        if ( $thumbnail_id ) {
+            set_post_thumbnail( $new_post_id, $thumbnail_id );
+        }
+
+        // Copy all post meta (except language-specific ones)
+        $post_meta = get_post_meta( $post_id );
+        $exclude_meta = array( '_wp_hreflang_language', '_wp_hreflang_translations', '_edit_lock', '_edit_last' );
+
+        foreach ( $post_meta as $meta_key => $meta_values ) {
+            if ( in_array( $meta_key, $exclude_meta ) ) {
+                continue;
+            }
+
+            foreach ( $meta_values as $meta_value ) {
+                add_post_meta( $new_post_id, $meta_key, maybe_unserialize( $meta_value ) );
+            }
+        }
+
+        // Link posts as translations
+        $original_lang = get_post_meta( $post_id, '_wp_hreflang_language', true );
+        if ( empty( $original_lang ) ) {
+            $options = $this->get_options();
+            $original_lang = isset( $options['default_language'] ) ? $options['default_language'] : 'en';
+        }
+
+        // Update original post translations
+        $original_translations = get_post_meta( $post_id, '_wp_hreflang_translations', true );
+        if ( ! is_array( $original_translations ) ) {
+            $original_translations = array();
+        }
+        $original_translations[ $target_lang ] = $new_post_id;
+        update_post_meta( $post_id, '_wp_hreflang_translations', $original_translations );
+
+        // Update new post translations
+        $new_translations = array( $original_lang => $post_id );
+        update_post_meta( $new_post_id, '_wp_hreflang_translations', $new_translations );
+
+        wp_send_json_success( array(
+            'message' => sprintf( __( 'Post duplicated successfully! New post ID: %d', 'wp-hreflang-manager' ), $new_post_id ),
+            'new_post_id' => $new_post_id,
+            'edit_url' => get_edit_post_link( $new_post_id, 'raw' )
+        ) );
     }
 }
