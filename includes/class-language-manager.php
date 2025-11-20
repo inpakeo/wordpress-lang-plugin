@@ -148,7 +148,9 @@ class WP_Hreflang_Language_Manager {
         }
 
         $languages = $this->get_available_languages();
-        $accepted = explode( ',', $_SERVER['HTTP_ACCEPT_LANGUAGE'] );
+        // Sanitize the HTTP_ACCEPT_LANGUAGE header
+        $accept_language = sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) );
+        $accepted = explode( ',', $accept_language );
 
         foreach ( $accepted as $lang ) {
             $lang_code = substr( $lang, 0, 2 );
@@ -221,7 +223,40 @@ class WP_Hreflang_Language_Manager {
      * @param string $language Language code.
      */
     private function set_language_cookie( $language ) {
-        setcookie( 'wp_hreflang_language', $language, time() + ( 86400 * 365 ), COOKIEPATH, COOKIE_DOMAIN );
+        // Don't set cookie if headers already sent
+        if ( headers_sent() ) {
+            return;
+        }
+
+        $secure = is_ssl();
+        $samesite = 'Lax';
+
+        // For PHP 7.3+ use options array
+        if ( PHP_VERSION_ID >= 70300 ) {
+            setcookie(
+                'wp_hreflang_language',
+                $language,
+                array(
+                    'expires' => time() + ( 86400 * 365 ),
+                    'path' => COOKIEPATH,
+                    'domain' => COOKIE_DOMAIN,
+                    'secure' => $secure,
+                    'httponly' => true,
+                    'samesite' => $samesite
+                )
+            );
+        } else {
+            // Fallback for older PHP versions
+            setcookie(
+                'wp_hreflang_language',
+                $language,
+                time() + ( 86400 * 365 ),
+                COOKIEPATH,
+                COOKIE_DOMAIN,
+                $secure,
+                true
+            );
+        }
     }
 
     /**

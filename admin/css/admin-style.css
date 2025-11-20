@@ -269,3 +269,38 @@
 .wp-hreflang-tooltip:hover .dashicons {
     color: #2271b1;
 }
+
+/* Spinning Animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.dashicons.spin {
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+/* Export/Import Section */
+.wp-hreflang-export-import {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.wp-hreflang-export-section,
+.wp-hreflang-import-section {
+    flex: 1;
+    min-width: 300px;
+}
+
+.wp-hreflang-export-section p,
+.wp-hreflang-import-section p {
+    color: #666;
+    margin-bottom: 10px;
+}
+
+#wp-hreflang-import-file {
+    margin-bottom: 10px;
+}

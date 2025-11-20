@@ -62,6 +62,8 @@ class WP_Hreflang_Admin_Settings {
         add_action( 'wp_ajax_wp_hreflang_add_language', array( $this, 'ajax_add_language' ) );
         add_action( 'wp_ajax_wp_hreflang_delete_language', array( $this, 'ajax_delete_language' ) );
         add_action( 'wp_ajax_wp_hreflang_toggle_language', array( $this, 'ajax_toggle_language' ) );
+        add_action( 'wp_ajax_wp_hreflang_export_settings', array( $this, 'ajax_export_settings' ) );
+        add_action( 'wp_ajax_wp_hreflang_import_settings', array( $this, 'ajax_import_settings' ) );
 
         // Add settings link on plugins page
         add_filter( 'plugin_action_links_' . WP_HREFLANG_PLUGIN_BASENAME, array( $this, 'add_action_links' ) );
@@ -364,6 +366,39 @@ class WP_Hreflang_Admin_Settings {
                         </div>
                     </div>
 
+                    <div class="wp-hreflang-section">
+                        <h2><?php _e( 'Export / Import Settings', 'wp-hreflang-manager' ); ?></h2>
+                        <p><?php _e( 'Backup your settings or transfer them to another site.', 'wp-hreflang-manager' ); ?></p>
+
+                        <div class="wp-hreflang-export-import">
+                            <div class="export-section">
+                                <h3><?php _e( 'Export Settings', 'wp-hreflang-manager' ); ?></h3>
+                                <p><?php _e( 'Download your current settings as a JSON file for backup or migration.', 'wp-hreflang-manager' ); ?></p>
+                                <button type="button" id="wp-hreflang-export-btn" class="button button-secondary">
+                                    <span class="dashicons dashicons-download"></span>
+                                    <?php _e( 'Export Settings', 'wp-hreflang-manager' ); ?>
+                                </button>
+                            </div>
+
+                            <hr style="margin: 20px 0;">
+
+                            <div class="import-section">
+                                <h3><?php _e( 'Import Settings', 'wp-hreflang-manager' ); ?></h3>
+                                <p><?php _e( 'Upload a JSON settings file to restore or migrate settings.', 'wp-hreflang-manager' ); ?></p>
+                                <p class="description">
+                                    <strong><?php _e( 'Warning:', 'wp-hreflang-manager' ); ?></strong>
+                                    <?php _e( 'Importing will overwrite your current settings. Make sure to export first if you want to keep a backup.', 'wp-hreflang-manager' ); ?>
+                                </p>
+                                <input type="file" id="wp-hreflang-import-file" accept=".json" style="display: none;" />
+                                <button type="button" id="wp-hreflang-import-btn" class="button button-secondary">
+                                    <span class="dashicons dashicons-upload"></span>
+                                    <?php _e( 'Import Settings', 'wp-hreflang-manager' ); ?>
+                                </button>
+                                <div id="wp-hreflang-import-result" style="margin-top: 10px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <?php submit_button(); ?>
                 </form>
             </div>
@@ -465,5 +500,90 @@ class WP_Hreflang_Admin_Settings {
         update_option( $this->options_key, $options );
 
         wp_send_json_success( array( 'message' => 'Language updated successfully' ) );
+    }
+
+    /**
+     * AJAX: Export settings
+     */
+    public function ajax_export_settings() {
+        check_ajax_referer( 'wp_hreflang_admin_nonce', 'nonce' );
+
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => 'Unauthorized' ) );
+        }
+
+        $options = get_option( $this->options_key, array() );
+
+        // Prepare export data
+        $export_data = array(
+            'version' => WP_HREFLANG_VERSION,
+            'export_date' => current_time( 'mysql' ),
+            'site_url' => get_site_url(),
+            'options' => $options
+        );
+
+        // Return JSON data
+        wp_send_json_success( array(
+            'filename' => 'wp-hreflang-settings-' . date( 'Y-m-d-His' ) . '.json',
+            'data' => wp_json_encode( $export_data, JSON_PRETTY_PRINT )
+        ) );
+    }
+
+    /**
+     * AJAX: Import settings
+     */
+    public function ajax_import_settings() {
+        check_ajax_referer( 'wp_hreflang_admin_nonce', 'nonce' );
+
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => 'Unauthorized' ) );
+        }
+
+        // Check if file was uploaded
+        if ( empty( $_FILES['import_file'] ) ) {
+            wp_send_json_error( array( 'message' => 'No file uploaded' ) );
+        }
+
+        $file = $_FILES['import_file'];
+
+        // Check for upload errors
+        if ( $file['error'] !== UPLOAD_ERR_OK ) {
+            wp_send_json_error( array( 'message' => 'File upload error' ) );
+        }
+
+        // Check file type
+        $file_extension = pathinfo( $file['name'], PATHINFO_EXTENSION );
+        if ( $file_extension !== 'json' ) {
+            wp_send_json_error( array( 'message' => 'Invalid file type. Please upload a JSON file.' ) );
+        }
+
+        // Read file content
+        $file_content = file_get_contents( $file['tmp_name'] );
+        if ( $file_content === false ) {
+            wp_send_json_error( array( 'message' => 'Failed to read file content' ) );
+        }
+
+        // Parse JSON
+        $import_data = json_decode( $file_content, true );
+        if ( json_last_error() !== JSON_ERROR_NONE ) {
+            wp_send_json_error( array( 'message' => 'Invalid JSON format: ' . json_last_error_msg() ) );
+        }
+
+        // Validate import data structure
+        if ( ! isset( $import_data['options'] ) || ! is_array( $import_data['options'] ) ) {
+            wp_send_json_error( array( 'message' => 'Invalid settings file structure' ) );
+        }
+
+        // Sanitize imported options
+        $options = $this->sanitize_options( $import_data['options'] );
+
+        // Update options
+        update_option( $this->options_key, $options );
+
+        wp_send_json_success( array(
+            'message' => 'Settings imported successfully',
+            'imported_from' => isset( $import_data['site_url'] ) ? $import_data['site_url'] : 'Unknown',
+            'export_date' => isset( $import_data['export_date'] ) ? $import_data['export_date'] : 'Unknown'
+        ) );
     }
 }

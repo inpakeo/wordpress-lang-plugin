@@ -37,6 +37,12 @@
                     $('#add-language-btn').trigger('click');
                 }
             });
+
+            // Export settings button
+            $('#wp-hreflang-export-btn').on('click', this.handleExportSettings.bind(this));
+
+            // Import settings button
+            $('#wp-hreflang-import-btn').on('click', this.handleImportSettings.bind(this));
         },
 
         /**
@@ -205,6 +211,123 @@
                     });
                 }, 3000);
             }
+        },
+
+        /**
+         * Handle export settings
+         */
+        handleExportSettings: function(e) {
+            e.preventDefault();
+
+            var $button = $(e.currentTarget);
+            var originalHtml = $button.html();
+
+            // Show loading state
+            $button.prop('disabled', true).html('<span class="dashicons dashicons-update-alt spin"></span> Exporting...');
+
+            // Get nonce from the page
+            var nonce = $('#wp_hreflang_admin_nonce').val();
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'wp_hreflang_export_settings',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success && response.data) {
+                        // Create download link
+                        var blob = new Blob([response.data.data], { type: 'application/json' });
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = response.data.filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+
+                        // Show success message
+                        alert('Settings exported successfully!');
+                    } else {
+                        alert('Export failed: ' + (response.data.message || 'Unknown error'));
+                    }
+                },
+                error: function() {
+                    alert('Export failed: Network error');
+                },
+                complete: function() {
+                    // Restore button state
+                    $button.prop('disabled', false).html(originalHtml);
+                }
+            });
+        },
+
+        /**
+         * Handle import settings
+         */
+        handleImportSettings: function(e) {
+            e.preventDefault();
+
+            var $fileInput = $('#wp-hreflang-import-file');
+            var file = $fileInput[0].files[0];
+
+            if (!file) {
+                alert('Please select a file to import');
+                return;
+            }
+
+            // Validate file type
+            if (!file.name.endsWith('.json')) {
+                alert('Please select a valid JSON file');
+                return;
+            }
+
+            // Confirm import
+            if (!confirm('This will replace your current settings. Are you sure you want to continue?')) {
+                return;
+            }
+
+            var $button = $(e.currentTarget);
+            var originalHtml = $button.html();
+
+            // Show loading state
+            $button.prop('disabled', true).html('<span class="dashicons dashicons-update-alt spin"></span> Importing...');
+
+            // Get nonce from the page
+            var nonce = $('#wp_hreflang_admin_nonce').val();
+
+            // Create FormData
+            var formData = new FormData();
+            formData.append('action', 'wp_hreflang_import_settings');
+            formData.append('nonce', nonce);
+            formData.append('import_file', file);
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        alert('Settings imported successfully! The page will reload.');
+                        window.location.reload();
+                    } else {
+                        alert('Import failed: ' + (response.data.message || 'Unknown error'));
+                    }
+                },
+                error: function() {
+                    alert('Import failed: Network error');
+                },
+                complete: function() {
+                    // Restore button state
+                    $button.prop('disabled', false).html(originalHtml);
+                    // Clear file input
+                    $fileInput.val('');
+                }
+            });
         },
 
         /**
