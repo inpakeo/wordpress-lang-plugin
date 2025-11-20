@@ -65,6 +65,9 @@ class WP_Hreflang_Language_Manager {
         // Handle language switching
         add_action( 'init', array( $this, 'handle_language_switch' ) );
 
+        // Update current language after WordPress finishes parsing the request
+        add_action( 'wp', array( $this, 'update_current_language_from_post' ), 5 );
+
         // Add language meta box to posts/pages
         add_action( 'add_meta_boxes', array( $this, 'add_language_meta_box' ) );
 
@@ -105,12 +108,13 @@ class WP_Hreflang_Language_Manager {
 
     /**
      * Set current language based on cookie, URL, or default
+     * Note: For singular posts/pages, language is updated later via update_current_language_from_post()
      */
     private function set_current_language() {
         $options = $this->get_options();
         $default_language = isset( $options['default_language'] ) ? $options['default_language'] : 'en';
 
-        // Check URL parameter
+        // Check URL parameter first (highest priority)
         if ( isset( $_GET['lang'] ) && $this->is_valid_language( sanitize_text_field( $_GET['lang'] ) ) ) {
             $this->current_language = sanitize_text_field( $_GET['lang'] );
             $this->set_language_cookie( $this->current_language );
@@ -138,6 +142,7 @@ class WP_Hreflang_Language_Manager {
         }
 
         // Use default language
+        // Note: For singular posts, this will be updated by update_current_language_from_post()
         $this->current_language = $default_language;
     }
 
@@ -172,6 +177,40 @@ class WP_Hreflang_Language_Manager {
         }
 
         return false;
+    }
+
+    /**
+     * Update current language from post meta after WordPress finishes parsing the request
+     * This hook runs after wp_query is populated, so we have access to the current post
+     */
+    public function update_current_language_from_post() {
+        // Only check for singular pages (posts, pages, custom post types)
+        if ( ! is_singular() ) {
+            return;
+        }
+
+        // Skip if language was explicitly set via URL parameter
+        if ( isset( $_GET['lang'] ) ) {
+            return;
+        }
+
+        global $post;
+        if ( empty( $post ) ) {
+            return;
+        }
+
+        // Get the language of the current post
+        $post_lang = get_post_meta( $post->ID, '_wp_hreflang_language', true );
+
+        // If post has a language set and it's valid, update current language
+        if ( ! empty( $post_lang ) && $this->is_valid_language( $post_lang ) ) {
+            // Only update if it's different from current to avoid unnecessary cookie updates
+            if ( $this->current_language !== $post_lang ) {
+                $this->current_language = $post_lang;
+                // Set cookie to remember user's language preference
+                $this->set_language_cookie( $this->current_language );
+            }
+        }
     }
 
     /**
