@@ -598,6 +598,41 @@ class WP_Hreflang_Admin_Settings {
                 </form>
             </div>
         </div>
+
+        <!-- Forced inline script for debugging -->
+        <script>
+            console.log('=== INLINE SCRIPT LOADED ===');
+            console.log('Current URL:', window.location.href);
+            console.log('Document ready state:', document.readyState);
+
+            // Check if our script loaded
+            setTimeout(() => {
+                console.log('=== CHECKING AFTER 1 SECOND ===');
+                const quickSelect = document.getElementById('language-quick-select');
+                console.log('Quick select element found:', !!quickSelect);
+
+                if (quickSelect) {
+                    console.log('Quick select HTML:', quickSelect.outerHTML.substring(0, 200));
+
+                    // Manual event listener as fallback
+                    quickSelect.addEventListener('change', function(e) {
+                        console.log('🔥 MANUAL HANDLER: Quick select changed!');
+                        const option = e.target.options[e.target.selectedIndex];
+                        console.log('Selected:', option.value, option.dataset);
+
+                        if (option.value) {
+                            document.getElementById('new-lang-code').value = option.value;
+                            document.getElementById('new-lang-name').value = option.dataset.name || '';
+                            document.getElementById('new-lang-hreflang').value = option.dataset.hreflang || '';
+                            document.getElementById('new-lang-flag').value = option.dataset.flag || '';
+                            e.target.selectedIndex = 0;
+                            console.log('✅ Fields filled manually!');
+                        }
+                    });
+                    console.log('✅ Manual event listener attached!');
+                }
+            }, 1000);
+        </script>
         <?php
     }
 
