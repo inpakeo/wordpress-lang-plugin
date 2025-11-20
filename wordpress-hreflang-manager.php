@@ -214,17 +214,14 @@ class WP_Hreflang_Manager {
             WP_HREFLANG_VERSION
         );
 
-        // Enqueue JS
+        // Enqueue JS (vanilla JS - no jQuery required)
         wp_enqueue_script(
             'wp-hreflang-admin',
             WP_HREFLANG_PLUGIN_URL . 'admin/js/admin-script.js',
-            array( 'jquery', 'jquery-ui-sortable', 'wp-color-picker' ),
+            array(), // No dependencies - pure vanilla JS
             WP_HREFLANG_VERSION,
             true
         );
-
-        // Enqueue color picker
-        wp_enqueue_style( 'wp-color-picker' );
 
         // Localize script
         wp_localize_script(
