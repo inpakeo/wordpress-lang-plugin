@@ -115,23 +115,45 @@
 }
 
 .add-language-form {
+    margin: 15px 0;
+}
+
+.language-select-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.language-select-row label {
+    font-weight: 600;
+    min-width: 100px;
+}
+
+.language-select-row select {
+    flex: 1;
+    max-width: 500px;
+}
+
+.language-input-row {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
     align-items: center;
-    margin: 15px 0;
 }
 
-.add-language-form input[type="text"] {
+.language-input-row input[type="text"] {
     flex: 1;
     min-width: 150px;
 }
 
-.add-language-form .small-text {
+.language-input-row .small-text {
     flex: 0 0 80px;
 }
 
-.add-language-form button {
+.language-input-row button {
     white-space: nowrap;
 }
 

@@ -24,6 +24,9 @@
          * Bind events
          */
         bindEvents: function() {
+            // Language quick select dropdown
+            $('#language-quick-select').on('change', this.handleLanguageQuickSelect.bind(this));
+
             // Add language button
             $('#add-language-btn').on('click', this.handleAddLanguage.bind(this));
 
@@ -58,6 +61,36 @@
                     opacity: 0.8
                 });
             }
+        },
+
+        /**
+         * Handle language quick select
+         */
+        handleLanguageQuickSelect: function(e) {
+            var $select = $(e.currentTarget);
+            var $option = $select.find('option:selected');
+
+            if (!$option.val()) {
+                return;
+            }
+
+            // Get language data from selected option
+            var code = $option.val();
+            var name = $option.data('name');
+            var hreflang = $option.data('hreflang');
+            var flag = $option.data('flag');
+
+            // Auto-fill input fields
+            $('#new-lang-code').val(code);
+            $('#new-lang-name').val(name);
+            $('#new-lang-hreflang').val(hreflang);
+            $('#new-lang-flag').val(flag);
+
+            // Reset the dropdown
+            $select.val('');
+
+            // Focus on add button
+            $('#add-language-btn').focus();
         },
 
         /**

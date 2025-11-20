@@ -94,6 +94,90 @@ class WP_Hreflang_Admin_Settings {
     }
 
     /**
+     * Get available languages database with flags and hreflang codes
+     *
+     * @return array
+     */
+    public static function get_available_languages_database() {
+        return array(
+            'en' => array( 'name' => 'English', 'hreflang' => 'en', 'flag' => '🇬🇧' ),
+            'en-US' => array( 'name' => 'English (United States)', 'hreflang' => 'en-US', 'flag' => '🇺🇸' ),
+            'en-GB' => array( 'name' => 'English (United Kingdom)', 'hreflang' => 'en-GB', 'flag' => '🇬🇧' ),
+            'es' => array( 'name' => 'Spanish', 'hreflang' => 'es', 'flag' => '🇪🇸' ),
+            'es-ES' => array( 'name' => 'Spanish (Spain)', 'hreflang' => 'es-ES', 'flag' => '🇪🇸' ),
+            'es-MX' => array( 'name' => 'Spanish (Mexico)', 'hreflang' => 'es-MX', 'flag' => '🇲🇽' ),
+            'fr' => array( 'name' => 'French', 'hreflang' => 'fr', 'flag' => '🇫🇷' ),
+            'fr-FR' => array( 'name' => 'French (France)', 'hreflang' => 'fr-FR', 'flag' => '🇫🇷' ),
+            'fr-CA' => array( 'name' => 'French (Canada)', 'hreflang' => 'fr-CA', 'flag' => '🇨🇦' ),
+            'de' => array( 'name' => 'German', 'hreflang' => 'de', 'flag' => '🇩🇪' ),
+            'de-DE' => array( 'name' => 'German (Germany)', 'hreflang' => 'de-DE', 'flag' => '🇩🇪' ),
+            'de-AT' => array( 'name' => 'German (Austria)', 'hreflang' => 'de-AT', 'flag' => '🇦🇹' ),
+            'de-CH' => array( 'name' => 'German (Switzerland)', 'hreflang' => 'de-CH', 'flag' => '🇨🇭' ),
+            'it' => array( 'name' => 'Italian', 'hreflang' => 'it', 'flag' => '🇮🇹' ),
+            'it-IT' => array( 'name' => 'Italian (Italy)', 'hreflang' => 'it-IT', 'flag' => '🇮🇹' ),
+            'pt' => array( 'name' => 'Portuguese', 'hreflang' => 'pt', 'flag' => '🇵🇹' ),
+            'pt-BR' => array( 'name' => 'Portuguese (Brazil)', 'hreflang' => 'pt-BR', 'flag' => '🇧🇷' ),
+            'pt-PT' => array( 'name' => 'Portuguese (Portugal)', 'hreflang' => 'pt-PT', 'flag' => '🇵🇹' ),
+            'ru' => array( 'name' => 'Russian', 'hreflang' => 'ru', 'flag' => '🇷🇺' ),
+            'ru-RU' => array( 'name' => 'Russian (Russia)', 'hreflang' => 'ru-RU', 'flag' => '🇷🇺' ),
+            'ja' => array( 'name' => 'Japanese', 'hreflang' => 'ja', 'flag' => '🇯🇵' ),
+            'ja-JP' => array( 'name' => 'Japanese (Japan)', 'hreflang' => 'ja-JP', 'flag' => '🇯🇵' ),
+            'zh' => array( 'name' => 'Chinese', 'hreflang' => 'zh', 'flag' => '🇨🇳' ),
+            'zh-CN' => array( 'name' => 'Chinese (Simplified)', 'hreflang' => 'zh-CN', 'flag' => '🇨🇳' ),
+            'zh-TW' => array( 'name' => 'Chinese (Traditional)', 'hreflang' => 'zh-TW', 'flag' => '🇹🇼' ),
+            'zh-HK' => array( 'name' => 'Chinese (Hong Kong)', 'hreflang' => 'zh-HK', 'flag' => '🇭🇰' ),
+            'ko' => array( 'name' => 'Korean', 'hreflang' => 'ko', 'flag' => '🇰🇷' ),
+            'ko-KR' => array( 'name' => 'Korean (South Korea)', 'hreflang' => 'ko-KR', 'flag' => '🇰🇷' ),
+            'ar' => array( 'name' => 'Arabic', 'hreflang' => 'ar', 'flag' => '🇸🇦' ),
+            'ar-SA' => array( 'name' => 'Arabic (Saudi Arabia)', 'hreflang' => 'ar-SA', 'flag' => '🇸🇦' ),
+            'ar-AE' => array( 'name' => 'Arabic (UAE)', 'hreflang' => 'ar-AE', 'flag' => '🇦🇪' ),
+            'nl' => array( 'name' => 'Dutch', 'hreflang' => 'nl', 'flag' => '🇳🇱' ),
+            'nl-NL' => array( 'name' => 'Dutch (Netherlands)', 'hreflang' => 'nl-NL', 'flag' => '🇳🇱' ),
+            'nl-BE' => array( 'name' => 'Dutch (Belgium)', 'hreflang' => 'nl-BE', 'flag' => '🇧🇪' ),
+            'pl' => array( 'name' => 'Polish', 'hreflang' => 'pl', 'flag' => '🇵🇱' ),
+            'pl-PL' => array( 'name' => 'Polish (Poland)', 'hreflang' => 'pl-PL', 'flag' => '🇵🇱' ),
+            'tr' => array( 'name' => 'Turkish', 'hreflang' => 'tr', 'flag' => '🇹🇷' ),
+            'tr-TR' => array( 'name' => 'Turkish (Turkey)', 'hreflang' => 'tr-TR', 'flag' => '🇹🇷' ),
+            'uk' => array( 'name' => 'Ukrainian', 'hreflang' => 'uk', 'flag' => '🇺🇦' ),
+            'uk-UA' => array( 'name' => 'Ukrainian (Ukraine)', 'hreflang' => 'uk-UA', 'flag' => '🇺🇦' ),
+            'sv' => array( 'name' => 'Swedish', 'hreflang' => 'sv', 'flag' => '🇸🇪' ),
+            'sv-SE' => array( 'name' => 'Swedish (Sweden)', 'hreflang' => 'sv-SE', 'flag' => '🇸🇪' ),
+            'no' => array( 'name' => 'Norwegian', 'hreflang' => 'no', 'flag' => '🇳🇴' ),
+            'nb-NO' => array( 'name' => 'Norwegian (Bokmål)', 'hreflang' => 'nb-NO', 'flag' => '🇳🇴' ),
+            'da' => array( 'name' => 'Danish', 'hreflang' => 'da', 'flag' => '🇩🇰' ),
+            'da-DK' => array( 'name' => 'Danish (Denmark)', 'hreflang' => 'da-DK', 'flag' => '🇩🇰' ),
+            'fi' => array( 'name' => 'Finnish', 'hreflang' => 'fi', 'flag' => '🇫🇮' ),
+            'fi-FI' => array( 'name' => 'Finnish (Finland)', 'hreflang' => 'fi-FI', 'flag' => '🇫🇮' ),
+            'cs' => array( 'name' => 'Czech', 'hreflang' => 'cs', 'flag' => '🇨🇿' ),
+            'cs-CZ' => array( 'name' => 'Czech (Czech Republic)', 'hreflang' => 'cs-CZ', 'flag' => '🇨🇿' ),
+            'hu' => array( 'name' => 'Hungarian', 'hreflang' => 'hu', 'flag' => '🇭🇺' ),
+            'hu-HU' => array( 'name' => 'Hungarian (Hungary)', 'hreflang' => 'hu-HU', 'flag' => '🇭🇺' ),
+            'ro' => array( 'name' => 'Romanian', 'hreflang' => 'ro', 'flag' => '🇷🇴' ),
+            'ro-RO' => array( 'name' => 'Romanian (Romania)', 'hreflang' => 'ro-RO', 'flag' => '🇷🇴' ),
+            'el' => array( 'name' => 'Greek', 'hreflang' => 'el', 'flag' => '🇬🇷' ),
+            'el-GR' => array( 'name' => 'Greek (Greece)', 'hreflang' => 'el-GR', 'flag' => '🇬🇷' ),
+            'th' => array( 'name' => 'Thai', 'hreflang' => 'th', 'flag' => '🇹🇭' ),
+            'th-TH' => array( 'name' => 'Thai (Thailand)', 'hreflang' => 'th-TH', 'flag' => '🇹🇭' ),
+            'vi' => array( 'name' => 'Vietnamese', 'hreflang' => 'vi', 'flag' => '🇻🇳' ),
+            'vi-VN' => array( 'name' => 'Vietnamese (Vietnam)', 'hreflang' => 'vi-VN', 'flag' => '🇻🇳' ),
+            'id' => array( 'name' => 'Indonesian', 'hreflang' => 'id', 'flag' => '🇮🇩' ),
+            'id-ID' => array( 'name' => 'Indonesian (Indonesia)', 'hreflang' => 'id-ID', 'flag' => '🇮🇩' ),
+            'he' => array( 'name' => 'Hebrew', 'hreflang' => 'he', 'flag' => '🇮🇱' ),
+            'he-IL' => array( 'name' => 'Hebrew (Israel)', 'hreflang' => 'he-IL', 'flag' => '🇮🇱' ),
+            'hi' => array( 'name' => 'Hindi', 'hreflang' => 'hi', 'flag' => '🇮🇳' ),
+            'hi-IN' => array( 'name' => 'Hindi (India)', 'hreflang' => 'hi-IN', 'flag' => '🇮🇳' ),
+            'bg' => array( 'name' => 'Bulgarian', 'hreflang' => 'bg', 'flag' => '🇧🇬' ),
+            'bg-BG' => array( 'name' => 'Bulgarian (Bulgaria)', 'hreflang' => 'bg-BG', 'flag' => '🇧🇬' ),
+            'hr' => array( 'name' => 'Croatian', 'hreflang' => 'hr', 'flag' => '🇭🇷' ),
+            'hr-HR' => array( 'name' => 'Croatian (Croatia)', 'hreflang' => 'hr-HR', 'flag' => '🇭🇷' ),
+            'sk' => array( 'name' => 'Slovak', 'hreflang' => 'sk', 'flag' => '🇸🇰' ),
+            'sk-SK' => array( 'name' => 'Slovak (Slovakia)', 'hreflang' => 'sk-SK', 'flag' => '🇸🇰' ),
+            'sl' => array( 'name' => 'Slovenian', 'hreflang' => 'sl', 'flag' => '🇸🇮' ),
+            'sl-SI' => array( 'name' => 'Slovenian (Slovenia)', 'hreflang' => 'sl-SI', 'flag' => '🇸🇮' ),
+        );
+    }
+
+    /**
      * Sanitize options
      *
      * @param array $input Input options.
@@ -239,18 +323,45 @@ class WP_Hreflang_Admin_Settings {
 
                         <div class="wp-hreflang-add-language">
                             <h3><?php _e( 'Add New Language', 'wp-hreflang-manager' ); ?></h3>
+                            <p class="description">
+                                <?php _e( 'Select a language from the dropdown or enter custom values below:', 'wp-hreflang-manager' ); ?>
+                            </p>
+
                             <div class="add-language-form">
-                                <input type="text" id="new-lang-code" placeholder="<?php _e( 'Code (e.g., en)', 'wp-hreflang-manager' ); ?>" class="regular-text" />
-                                <input type="text" id="new-lang-name" placeholder="<?php _e( 'Name (e.g., English)', 'wp-hreflang-manager' ); ?>" class="regular-text" />
-                                <input type="text" id="new-lang-hreflang" placeholder="<?php _e( 'Hreflang (e.g., en-US)', 'wp-hreflang-manager' ); ?>" class="regular-text" />
-                                <input type="text" id="new-lang-flag" placeholder="<?php _e( 'Flag (e.g., 🇺🇸)', 'wp-hreflang-manager' ); ?>" class="small-text" />
-                                <button type="button" id="add-language-btn" class="button button-secondary">
-                                    <?php _e( 'Add Language', 'wp-hreflang-manager' ); ?>
-                                </button>
+                                <div class="language-select-row">
+                                    <label for="language-quick-select"><?php _e( 'Quick Select:', 'wp-hreflang-manager' ); ?></label>
+                                    <select id="language-quick-select" class="regular-text">
+                                        <option value=""><?php _e( '-- Select a language --', 'wp-hreflang-manager' ); ?></option>
+                                        <?php
+                                        $available_langs = self::get_available_languages_database();
+                                        foreach ( $available_langs as $code => $lang_data ) {
+                                            printf(
+                                                '<option value="%s" data-name="%s" data-hreflang="%s" data-flag="%s">%s %s</option>',
+                                                esc_attr( $code ),
+                                                esc_attr( $lang_data['name'] ),
+                                                esc_attr( $lang_data['hreflang'] ),
+                                                esc_attr( $lang_data['flag'] ),
+                                                esc_html( $lang_data['flag'] ),
+                                                esc_html( $lang_data['name'] . ' (' . $code . ')' )
+                                            );
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+
+                                <div class="language-input-row">
+                                    <input type="text" id="new-lang-code" placeholder="<?php _e( 'Code (e.g., en)', 'wp-hreflang-manager' ); ?>" class="regular-text" />
+                                    <input type="text" id="new-lang-name" placeholder="<?php _e( 'Name (e.g., English)', 'wp-hreflang-manager' ); ?>" class="regular-text" />
+                                    <input type="text" id="new-lang-hreflang" placeholder="<?php _e( 'Hreflang (e.g., en-US)', 'wp-hreflang-manager' ); ?>" class="regular-text" />
+                                    <input type="text" id="new-lang-flag" placeholder="<?php _e( 'Flag (e.g., 🇺🇸)', 'wp-hreflang-manager' ); ?>" class="small-text" />
+                                    <button type="button" id="add-language-btn" class="button button-secondary">
+                                        <?php _e( 'Add Language', 'wp-hreflang-manager' ); ?>
+                                    </button>
+                                </div>
                             </div>
 
-                            <p class="description">
-                                <?php _e( 'Popular hreflang codes:', 'wp-hreflang-manager' ); ?>
+                            <p class="description" style="margin-top: 10px;">
+                                <?php _e( 'Most popular:', 'wp-hreflang-manager' ); ?>
                                 <strong>en</strong> (English),
                                 <strong>es</strong> (Spanish),
                                 <strong>fr</strong> (French),
