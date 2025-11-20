@@ -32,10 +32,17 @@
          * Bind all events
          */
         bindEvents() {
+            console.log('WP Hreflang: Binding events...');
+
             // Language quick select dropdown
             const quickSelect = document.getElementById('language-quick-select');
+            console.log('Quick select element:', quickSelect);
+
             if (quickSelect) {
+                console.log('✓ Quick select found, adding event listener');
                 quickSelect.addEventListener('change', (e) => this.handleLanguageQuickSelect(e));
+            } else {
+                console.warn('✗ Quick select element not found!');
             }
 
             // Add language button

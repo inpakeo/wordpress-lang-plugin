@@ -328,15 +328,15 @@ class WP_Hreflang_Admin_Settings {
 
                         <div class="wp-hreflang-add-language">
                             <h3><?php _e( 'Add New Language', 'wp-hreflang-manager' ); ?></h3>
-                            <p class="description">
-                                <?php _e( 'Select a language from the dropdown or enter custom values below:', 'wp-hreflang-manager' ); ?>
-                            </p>
 
-                            <div class="add-language-form">
-                                <div class="language-select-row">
-                                    <label for="language-quick-select"><?php _e( 'Quick Select:', 'wp-hreflang-manager' ); ?></label>
-                                    <select id="language-quick-select" class="regular-text">
-                                        <option value=""><?php _e( '-- Select a language --', 'wp-hreflang-manager' ); ?></option>
+                            <div class="add-language-card">
+                                <div class="quick-select-section">
+                                    <label for="language-quick-select" class="quick-select-label">
+                                        <span class="dashicons dashicons-translation"></span>
+                                        <?php _e( 'Quick Select', 'wp-hreflang-manager' ); ?>
+                                    </label>
+                                    <select id="language-quick-select" class="quick-select-dropdown">
+                                        <option value=""><?php _e( '-- Choose a language --', 'wp-hreflang-manager' ); ?></option>
                                         <?php
                                         $available_langs = self::get_available_languages_database();
                                         foreach ( $available_langs as $code => $lang_data ) {
@@ -352,28 +352,72 @@ class WP_Hreflang_Admin_Settings {
                                         }
                                         ?>
                                     </select>
+                                    <p class="help-text"><?php _e( 'Select from 70+ pre-configured languages', 'wp-hreflang-manager' ); ?></p>
                                 </div>
 
-                                <div class="language-input-row">
-                                    <input type="text" id="new-lang-code" placeholder="<?php _e( 'Code (e.g., en)', 'wp-hreflang-manager' ); ?>" class="regular-text" />
-                                    <input type="text" id="new-lang-name" placeholder="<?php _e( 'Name (e.g., English)', 'wp-hreflang-manager' ); ?>" class="regular-text" />
-                                    <input type="text" id="new-lang-hreflang" placeholder="<?php _e( 'Hreflang (e.g., en-US)', 'wp-hreflang-manager' ); ?>" class="regular-text" />
-                                    <input type="text" id="new-lang-flag" placeholder="<?php _e( 'Flag (e.g., 🇺🇸)', 'wp-hreflang-manager' ); ?>" class="small-text" />
-                                    <button type="button" id="add-language-btn" class="button button-secondary">
-                                        <?php _e( 'Add Language', 'wp-hreflang-manager' ); ?>
-                                    </button>
+                                <div class="divider-or">
+                                    <span><?php _e( 'or enter custom values', 'wp-hreflang-manager' ); ?></span>
+                                </div>
+
+                                <div class="manual-input-section">
+                                    <div class="input-grid">
+                                        <div class="input-group">
+                                            <label for="new-lang-code"><?php _e( 'Language Code', 'wp-hreflang-manager' ); ?> *</label>
+                                            <input type="text"
+                                                   id="new-lang-code"
+                                                   placeholder="en"
+                                                   class="lang-input"
+                                                   maxlength="2" />
+                                            <span class="input-hint"><?php _e( '2 letters', 'wp-hreflang-manager' ); ?></span>
+                                        </div>
+
+                                        <div class="input-group">
+                                            <label for="new-lang-name"><?php _e( 'Language Name', 'wp-hreflang-manager' ); ?> *</label>
+                                            <input type="text"
+                                                   id="new-lang-name"
+                                                   placeholder="English"
+                                                   class="lang-input" />
+                                            <span class="input-hint"><?php _e( 'Display name', 'wp-hreflang-manager' ); ?></span>
+                                        </div>
+
+                                        <div class="input-group">
+                                            <label for="new-lang-hreflang"><?php _e( 'Hreflang Code', 'wp-hreflang-manager' ); ?> *</label>
+                                            <input type="text"
+                                                   id="new-lang-hreflang"
+                                                   placeholder="en-US"
+                                                   class="lang-input" />
+                                            <span class="input-hint"><?php _e( 'ISO format', 'wp-hreflang-manager' ); ?></span>
+                                        </div>
+
+                                        <div class="input-group">
+                                            <label for="new-lang-flag"><?php _e( 'Flag Emoji', 'wp-hreflang-manager' ); ?></label>
+                                            <input type="text"
+                                                   id="new-lang-flag"
+                                                   placeholder="🇺🇸"
+                                                   class="lang-input flag-input"
+                                                   maxlength="4" />
+                                            <span class="input-hint"><?php _e( 'Optional', 'wp-hreflang-manager' ); ?></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="action-row">
+                                        <button type="button" id="add-language-btn" class="button button-primary button-large">
+                                            <span class="dashicons dashicons-plus-alt"></span>
+                                            <?php _e( 'Add Language', 'wp-hreflang-manager' ); ?>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="popular-languages">
+                                    <span class="popular-label"><?php _e( 'Popular:', 'wp-hreflang-manager' ); ?></span>
+                                    <span class="lang-badge">🇬🇧 English</span>
+                                    <span class="lang-badge">🇪🇸 Spanish</span>
+                                    <span class="lang-badge">🇫🇷 French</span>
+                                    <span class="lang-badge">🇩🇪 German</span>
+                                    <span class="lang-badge">🇷🇺 Russian</span>
+                                    <span class="lang-badge">🇨🇳 Chinese</span>
                                 </div>
                             </div>
-
-                            <p class="description" style="margin-top: 10px;">
-                                <?php _e( 'Most popular:', 'wp-hreflang-manager' ); ?>
-                                <strong>en</strong> (English),
-                                <strong>es</strong> (Spanish),
-                                <strong>fr</strong> (French),
-                                <strong>de</strong> (German),
-                                <strong>ru</strong> (Russian),
-                                <strong>zh</strong> (Chinese)
-                            </p>
                         </div>
                     </div>
 
