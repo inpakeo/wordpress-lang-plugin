@@ -402,6 +402,16 @@ class WP_Hreflang_Language_Manager {
 
         echo '<div class="wp-hreflang-meta-box">';
 
+        // Instructions
+        echo '<div style="background: #f0f6fc; border-left: 3px solid #2271b1; padding: 10px; margin-bottom: 15px;">';
+        echo '<p style="margin: 0; font-size: 12px; line-height: 1.5;">';
+        echo '<strong>' . __( 'How to use:', 'wp-hreflang-manager' ) . '</strong><br>';
+        echo __( '1. Set the language for this post below', 'wp-hreflang-manager' ) . '<br>';
+        echo __( '2. Create posts in other languages and set their language', 'wp-hreflang-manager' ) . '<br>';
+        echo __( '3. Link translations together by selecting posts from dropdowns', 'wp-hreflang-manager' );
+        echo '</p>';
+        echo '</div>';
+
         // Current post language
         echo '<p><strong>' . __( 'This post language:', 'wp-hreflang-manager' ) . '</strong></p>';
         echo '<select name="wp_hreflang_language" id="wp_hreflang_language" class="widefat">';
@@ -415,11 +425,13 @@ class WP_Hreflang_Language_Manager {
             );
         }
         echo '</select>';
+        echo '<p class="description" style="margin-top: 5px;">' . __( 'Select the language of this post', 'wp-hreflang-manager' ) . '</p>';
 
         echo '<hr style="margin: 15px 0;">';
 
         // Translations
         echo '<p><strong>' . __( 'Link translations:', 'wp-hreflang-manager' ) . '</strong></p>';
+        echo '<p class="description" style="margin-top: 5px; margin-bottom: 10px;">' . __( 'Link this post to its translations in other languages', 'wp-hreflang-manager' ) . '</p>';
 
         foreach ( $languages as $lang_code => $language ) {
             if ( $lang_code === $current_post_lang ) {
@@ -448,19 +460,35 @@ class WP_Hreflang_Language_Manager {
 
             $posts = get_posts( $args );
 
-            echo '<select name="wp_hreflang_translations[' . esc_attr( $lang_code ) . ']" class="widefat">';
-            echo '<option value="">' . __( '-- Select translation --', 'wp-hreflang-manager' ) . '</option>';
-
-            foreach ( $posts as $trans_post ) {
-                printf(
-                    '<option value="%d" %s>%s</option>',
-                    $trans_post->ID,
-                    selected( $translation_id, $trans_post->ID, false ),
-                    esc_html( $trans_post->post_title )
+            if ( empty( $posts ) ) {
+                // No posts available in this language
+                echo '<select name="wp_hreflang_translations[' . esc_attr( $lang_code ) . ']" class="widefat" disabled>';
+                echo '<option value="">' . sprintf( __( 'No %s posts available yet', 'wp-hreflang-manager' ), $language['name'] ) . '</option>';
+                echo '</select>';
+                echo '<p class="description" style="margin-top: 3px; font-size: 11px;">';
+                echo sprintf(
+                    __( 'Create a new %1$s post and set its language to link it here.', 'wp-hreflang-manager' ),
+                    '<strong>' . esc_html( $language['name'] ) . '</strong>'
                 );
+                echo ' <a href="' . esc_url( admin_url( 'post-new.php?post_type=' . $post->post_type ) ) . '" target="_blank">' . __( 'Create new post', 'wp-hreflang-manager' ) . '</a>';
+                echo '</p>';
+            } else {
+                // Posts available - show dropdown
+                echo '<select name="wp_hreflang_translations[' . esc_attr( $lang_code ) . ']" class="widefat">';
+                echo '<option value="">' . __( '-- Select translation --', 'wp-hreflang-manager' ) . '</option>';
+
+                foreach ( $posts as $trans_post ) {
+                    printf(
+                        '<option value="%d" %s>%s</option>',
+                        $trans_post->ID,
+                        selected( $translation_id, $trans_post->ID, false ),
+                        esc_html( $trans_post->post_title )
+                    );
+                }
+
+                echo '</select>';
             }
 
-            echo '</select>';
             echo '</p>';
         }
 
