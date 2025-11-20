@@ -5,14 +5,20 @@
  * @package WP_Hreflang_Manager
  */
 
+// Immediate execution marker
+console.log('🚀 WP Hreflang script loaded!');
+
 (function() {
     'use strict';
+
+    console.log('📦 WP Hreflang IIFE started');
 
     /**
      * Main Admin Handler
      */
     class WPHreflangAdmin {
         constructor() {
+            console.log('🏗️ WPHreflangAdmin constructor called');
             this.optionsKey = 'wp_hreflang_options';
             this.init();
         }
@@ -21,9 +27,15 @@
          * Initialize
          */
         init() {
+            console.log('⚙️ Init called, readyState:', document.readyState);
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => this.bindEvents());
+                console.log('⏳ Document still loading, adding DOMContentLoaded listener');
+                document.addEventListener('DOMContentLoaded', () => {
+                    console.log('✅ DOMContentLoaded fired');
+                    this.bindEvents();
+                });
             } else {
+                console.log('✅ Document already loaded, binding events immediately');
                 this.bindEvents();
             }
         }
@@ -139,10 +151,16 @@
          * Handle language quick select
          */
         handleLanguageQuickSelect(e) {
+            console.log('🎯 handleLanguageQuickSelect triggered!');
+
             const select = e.target;
             const selectedOption = select.options[select.selectedIndex];
 
+            console.log('Selected option:', selectedOption);
+            console.log('Selected value:', selectedOption.value);
+
             if (!selectedOption.value) {
+                console.log('⚠️ No value selected, returning');
                 return;
             }
 
@@ -152,7 +170,7 @@
             const hreflang = selectedOption.dataset.hreflang;
             const flag = selectedOption.dataset.flag;
 
-            console.log('Quick Select:', { code, name, hreflang, flag });
+            console.log('📝 Data from selected option:', { code, name, hreflang, flag });
 
             // Auto-fill input fields
             const codeInput = document.getElementById('new-lang-code');
@@ -160,10 +178,29 @@
             const hreflangInput = document.getElementById('new-lang-hreflang');
             const flagInput = document.getElementById('new-lang-flag');
 
-            if (codeInput) codeInput.value = code;
-            if (nameInput) nameInput.value = name;
-            if (hreflangInput) hreflangInput.value = hreflang;
-            if (flagInput) flagInput.value = flag;
+            console.log('🔍 Found input elements:', {
+                codeInput: !!codeInput,
+                nameInput: !!nameInput,
+                hreflangInput: !!hreflangInput,
+                flagInput: !!flagInput
+            });
+
+            if (codeInput) {
+                codeInput.value = code;
+                console.log('✅ Set code:', code);
+            }
+            if (nameInput) {
+                nameInput.value = name;
+                console.log('✅ Set name:', name);
+            }
+            if (hreflangInput) {
+                hreflangInput.value = hreflang;
+                console.log('✅ Set hreflang:', hreflang);
+            }
+            if (flagInput) {
+                flagInput.value = flag;
+                console.log('✅ Set flag:', flag);
+            }
 
             // Reset dropdown
             select.selectedIndex = 0;
@@ -465,16 +502,29 @@
     }
 
     // Initialize
-    new WPHreflangAdmin();
+    console.log('🎯 Creating new WPHreflangAdmin instance...');
+    try {
+        new WPHreflangAdmin();
+        console.log('✅ WPHreflangAdmin instance created successfully');
+    } catch (error) {
+        console.error('❌ Error creating WPHreflangAdmin:', error);
+    }
 
     // Add CSS for rotation animation
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes rotation {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(359deg); }
-        }
-    `;
-    document.head.appendChild(style);
+    if (document.head) {
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes rotation {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(359deg); }
+            }
+        `;
+        document.head.appendChild(style);
+        console.log('✅ Rotation animation styles added');
+    }
+
+    console.log('🏁 WP Hreflang IIFE completed');
 
 })();
+
+console.log('✅ WP Hreflang script fully executed');
