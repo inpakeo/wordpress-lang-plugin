@@ -478,11 +478,23 @@ class WP_Hreflang_Language_Manager {
                 echo '<option value="">' . __( '-- Select translation --', 'wp-hreflang-manager' ) . '</option>';
 
                 foreach ( $posts as $trans_post ) {
+                    // Get post title with fallback
+                    $title = ! empty( $trans_post->post_title ) ? $trans_post->post_title : __( '(No title)', 'wp-hreflang-manager' );
+
+                    // Add status indicator for drafts
+                    $status_text = '';
+                    if ( $trans_post->post_status === 'draft' ) {
+                        $status_text = ' — ' . __( 'Draft', 'wp-hreflang-manager' );
+                    }
+
+                    // Add post ID for identification
+                    $display_text = sprintf( '%s (ID: %d)%s', $title, $trans_post->ID, $status_text );
+
                     printf(
                         '<option value="%d" %s>%s</option>',
                         $trans_post->ID,
                         selected( $translation_id, $trans_post->ID, false ),
-                        esc_html( $trans_post->post_title )
+                        esc_html( $display_text )
                     );
                 }
 
