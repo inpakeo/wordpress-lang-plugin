@@ -165,12 +165,15 @@ console.log('🚀 WP Hreflang script loaded!');
             }
 
             // Get data attributes
-            const code = selectedOption.value;
+            const fullCode = selectedOption.value;
             const name = selectedOption.dataset.name;
             const hreflang = selectedOption.dataset.hreflang;
             const flag = selectedOption.dataset.flag;
 
-            console.log('📝 Data from selected option:', { code, name, hreflang, flag });
+            // Extract 2-letter code from full code (e.g., "cs" from "cs-CZ")
+            const code = fullCode.split('-')[0].substring(0, 2);
+
+            console.log('📝 Data from selected option:', { fullCode, code, name, hreflang, flag });
 
             // Auto-fill input fields
             const codeInput = document.getElementById('new-lang-code');
@@ -187,7 +190,7 @@ console.log('🚀 WP Hreflang script loaded!');
 
             if (codeInput) {
                 codeInput.value = code;
-                console.log('✅ Set code:', code);
+                console.log('✅ Set code:', code, '(extracted from', fullCode + ')');
             }
             if (nameInput) {
                 nameInput.value = name;

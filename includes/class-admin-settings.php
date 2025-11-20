@@ -621,12 +621,18 @@ class WP_Hreflang_Admin_Settings {
                         console.log('Selected:', option.value, option.dataset);
 
                         if (option.value) {
-                            document.getElementById('new-lang-code').value = option.value;
+                            // Extract 2-letter code from full code (e.g., "cs" from "cs-CZ")
+                            const fullCode = option.value;
+                            const twoLetterCode = fullCode.split('-')[0].substring(0, 2);
+
+                            console.log('Full code:', fullCode, 'Two-letter code:', twoLetterCode);
+
+                            document.getElementById('new-lang-code').value = twoLetterCode;
                             document.getElementById('new-lang-name').value = option.dataset.name || '';
                             document.getElementById('new-lang-hreflang').value = option.dataset.hreflang || '';
                             document.getElementById('new-lang-flag').value = option.dataset.flag || '';
                             e.target.selectedIndex = 0;
-                            console.log('✅ Fields filled manually!');
+                            console.log('✅ Fields filled! Code:', twoLetterCode, 'Hreflang:', option.dataset.hreflang);
                         }
                     });
                     console.log('✅ Manual event listener attached!');
