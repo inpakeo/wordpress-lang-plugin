@@ -183,3 +183,64 @@ html[dir="rtl"] .wp-hreflang-dropdown select.wp-hreflang-select {
     background-position: left 8px center;
     padding: 8px 12px 8px 30px;
 }
+
+/* Menu Integration Styles */
+.menu-item-language-switcher {
+    display: flex;
+    align-items: center;
+}
+
+.menu-item-language-switcher .wp-hreflang-switcher {
+    margin: 0;
+}
+
+.menu-item-language-switcher .wp-hreflang-dropdown select.wp-hreflang-select {
+    padding: 6px 25px 6px 10px;
+    font-size: 13px;
+    min-width: 120px;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Horizontal menu alignment */
+.menu > .menu-item-language-switcher {
+    position: relative;
+}
+
+/* Vertical alignment for sidebar menus */
+.sidebar .menu-item-language-switcher,
+.widget_nav_menu .menu-item-language-switcher {
+    display: block;
+}
+
+.sidebar .menu-item-language-switcher .wp-hreflang-dropdown select.wp-hreflang-select,
+.widget_nav_menu .menu-item-language-switcher .wp-hreflang-dropdown select.wp-hreflang-select {
+    width: 100%;
+}
+
+/* List style in menu */
+.menu-item-language-switcher .wp-hreflang-list ul.wp-hreflang-list-items {
+    flex-direction: row;
+    gap: 5px;
+}
+
+/* Flags style in menu */
+.menu-item-language-switcher .wp-hreflang-flags {
+    gap: 5px;
+}
+
+.menu-item-language-switcher .wp-hreflang-flags a.wp-hreflang-flag {
+    font-size: 20px;
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+    .menu-item-language-switcher .wp-hreflang-dropdown select.wp-hreflang-select {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .menu-item-language-switcher .wp-hreflang-dropdown select.wp-hreflang-select:hover {
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+}

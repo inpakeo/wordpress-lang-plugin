@@ -77,6 +77,9 @@ class WP_Hreflang_Language_Manager {
         // AJAX handler for language switch
         add_action( 'wp_ajax_switch_language', array( $this, 'ajax_switch_language' ) );
         add_action( 'wp_ajax_nopriv_switch_language', array( $this, 'ajax_switch_language' ) );
+
+        // Add language switcher to menu if configured
+        add_filter( 'wp_nav_menu_items', array( $this, 'add_switcher_to_menu' ), 10, 2 );
     }
 
     /**
@@ -604,5 +607,35 @@ class WP_Hreflang_Language_Manager {
         $translations[ $post_lang ] = $post_id;
 
         return $translations;
+    }
+
+    /**
+     * Add language switcher to menu
+     *
+     * @param string $items Menu items HTML.
+     * @param object $args  Menu arguments.
+     * @return string Modified menu items.
+     */
+    public function add_switcher_to_menu( $items, $args ) {
+        // Get plugin options
+        $options = $this->get_options();
+
+        // Check if menu location is set and matches current menu
+        if ( empty( $options['menu_location'] ) || $args->theme_location !== $options['menu_location'] ) {
+            return $items;
+        }
+
+        // Get language switcher HTML
+        $switcher_html = WP_Hreflang_Language_Switcher::render( array(
+            'echo' => false
+        ) );
+
+        // Wrap switcher in menu item
+        if ( ! empty( $switcher_html ) ) {
+            $menu_item = '<li class="menu-item menu-item-language-switcher">' . $switcher_html . '</li>';
+            $items .= $menu_item;
+        }
+
+        return $items;
     }
 }

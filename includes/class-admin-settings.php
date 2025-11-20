@@ -263,6 +263,11 @@ class WP_Hreflang_Admin_Settings {
         $sanitized['show_language_names'] = isset( $input['show_language_names'] ) ? (bool) $input['show_language_names'] : true;
         $sanitized['auto_redirect'] = isset( $input['auto_redirect'] ) ? (bool) $input['auto_redirect'] : false;
 
+        // Sanitize menu location
+        if ( isset( $input['menu_location'] ) ) {
+            $sanitized['menu_location'] = sanitize_text_field( $input['menu_location'] );
+        }
+
         return $sanitized;
     }
 
@@ -496,6 +501,33 @@ class WP_Hreflang_Admin_Settings {
                                         <?php _e( 'Automatically redirect visitors based on their browser language', 'wp-hreflang-manager' ); ?>
                                     </label>
                                     <p class="description"><?php _e( 'First-time visitors will be redirected to their browser\'s language if available.', 'wp-hreflang-manager' ); ?></p>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row">
+                                    <label for="menu_location"><?php _e( 'Add to Menu', 'wp-hreflang-manager' ); ?></label>
+                                </th>
+                                <td>
+                                    <?php
+                                    $nav_menus = get_registered_nav_menus();
+                                    $selected_menu = isset( $options['menu_location'] ) ? $options['menu_location'] : '';
+                                    ?>
+                                    <select name="<?php echo $this->options_key; ?>[menu_location]" id="menu_location" class="regular-text">
+                                        <option value=""><?php _e( 'None (use shortcode or widget)', 'wp-hreflang-manager' ); ?></option>
+                                        <?php if ( ! empty( $nav_menus ) ) : ?>
+                                            <?php foreach ( $nav_menus as $location => $description ) : ?>
+                                                <option value="<?php echo esc_attr( $location ); ?>" <?php selected( $selected_menu, $location ); ?>>
+                                                    <?php echo esc_html( $description ); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        <?php else : ?>
+                                            <option value="" disabled><?php _e( 'No menus registered by theme', 'wp-hreflang-manager' ); ?></option>
+                                        <?php endif; ?>
+                                    </select>
+                                    <p class="description">
+                                        <?php _e( 'Automatically add language switcher to selected menu location. Alternatively, use shortcode [language_switcher] or widget.', 'wp-hreflang-manager' ); ?>
+                                    </p>
                                 </td>
                             </tr>
                         </table>
