@@ -58,6 +58,9 @@ class WP_Hreflang_Admin_Settings {
         // Register settings
         add_action( 'admin_init', array( $this, 'register_settings' ) );
 
+        // Enqueue scripts and styles
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
+
         // AJAX handlers
         add_action( 'wp_ajax_wp_hreflang_add_language', array( $this, 'ajax_add_language' ) );
         add_action( 'wp_ajax_wp_hreflang_delete_language', array( $this, 'ajax_delete_language' ) );
@@ -79,6 +82,48 @@ class WP_Hreflang_Admin_Settings {
             'manage_options',
             'wp-hreflang-settings',
             array( $this, 'render_settings_page' )
+        );
+    }
+
+    /**
+     * Enqueue admin scripts and styles
+     *
+     * @param string $hook Current admin page hook.
+     */
+    public function enqueue_admin_scripts( $hook ) {
+        // Only load on our settings page
+        if ( 'settings_page_wp-hreflang-settings' !== $hook ) {
+            return;
+        }
+
+        // Enqueue admin CSS
+        wp_enqueue_style(
+            'wp-hreflang-admin-style',
+            WP_HREFLANG_PLUGIN_URL . 'admin/css/admin-style.css',
+            array(),
+            WP_HREFLANG_VERSION
+        );
+
+        // Enqueue jQuery UI for sortable
+        wp_enqueue_script( 'jquery-ui-sortable' );
+
+        // Enqueue admin JS
+        wp_enqueue_script(
+            'wp-hreflang-admin-script',
+            WP_HREFLANG_PLUGIN_URL . 'admin/js/admin-script.js',
+            array( 'jquery', 'jquery-ui-sortable' ),
+            WP_HREFLANG_VERSION,
+            true
+        );
+
+        // Localize script with ajax URL
+        wp_localize_script(
+            'wp-hreflang-admin-script',
+            'wpHreflangAdmin',
+            array(
+                'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+                'nonce' => wp_create_nonce( 'wp_hreflang_admin' )
+            )
         );
     }
 
