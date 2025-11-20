@@ -188,7 +188,7 @@ class WP_Hreflang_Admin_Settings {
                                     <div class="language-flag">
                                         <input type="text"
                                                name="<?php echo $this->options_key; ?>[languages][<?php echo esc_attr( $lang_code ); ?>][flag]"
-                                               value="<?php echo esc_attr( $language['flag'] ); ?>"
+                                               value="<?php echo isset( $language['flag'] ) ? esc_attr( $language['flag'] ) : ''; ?>"
                                                placeholder="🇺🇸"
                                                class="small-text"
                                         />
@@ -201,7 +201,7 @@ class WP_Hreflang_Admin_Settings {
                                     <div class="language-name">
                                         <input type="text"
                                                name="<?php echo $this->options_key; ?>[languages][<?php echo esc_attr( $lang_code ); ?>][name]"
-                                               value="<?php echo esc_attr( $language['name'] ); ?>"
+                                               value="<?php echo isset( $language['name'] ) ? esc_attr( $language['name'] ) : ''; ?>"
                                                placeholder="<?php _e( 'Language Name', 'wp-hreflang-manager' ); ?>"
                                                class="regular-text"
                                         />
@@ -210,7 +210,7 @@ class WP_Hreflang_Admin_Settings {
                                     <div class="language-hreflang">
                                         <input type="text"
                                                name="<?php echo $this->options_key; ?>[languages][<?php echo esc_attr( $lang_code ); ?>][hreflang]"
-                                               value="<?php echo esc_attr( $language['hreflang'] ); ?>"
+                                               value="<?php echo isset( $language['hreflang'] ) ? esc_attr( $language['hreflang'] ) : ''; ?>"
                                                placeholder="en-US"
                                                class="regular-text"
                                         />
@@ -222,7 +222,7 @@ class WP_Hreflang_Admin_Settings {
                                             <input type="checkbox"
                                                    name="<?php echo $this->options_key; ?>[languages][<?php echo esc_attr( $lang_code ); ?>][enabled]"
                                                    value="1"
-                                                   <?php checked( $language['enabled'], true ); ?>
+                                                   <?php checked( isset( $language['enabled'] ) ? $language['enabled'] : false, true ); ?>
                                             />
                                             <?php _e( 'Enabled', 'wp-hreflang-manager' ); ?>
                                         </label>
@@ -271,11 +271,19 @@ class WP_Hreflang_Admin_Settings {
                                 </th>
                                 <td>
                                     <select name="<?php echo $this->options_key; ?>[default_language]" id="default_language" class="regular-text">
-                                        <?php foreach ( $languages as $lang_code => $language ) : ?>
-                                            <option value="<?php echo esc_attr( $lang_code ); ?>" <?php selected( $default_language, $lang_code ); ?>>
-                                                <?php echo esc_html( $language['flag'] . ' ' . $language['name'] ); ?>
-                                            </option>
-                                        <?php endforeach; ?>
+                                        <?php if ( empty( $languages ) ) : ?>
+                                            <option value=""><?php _e( 'No languages available. Please add a language first.', 'wp-hreflang-manager' ); ?></option>
+                                        <?php else : ?>
+                                            <?php foreach ( $languages as $lang_code => $language ) : ?>
+                                                <option value="<?php echo esc_attr( $lang_code ); ?>" <?php selected( $default_language, $lang_code ); ?>>
+                                                    <?php
+                                                    $flag = isset( $language['flag'] ) ? $language['flag'] : '';
+                                                    $name = isset( $language['name'] ) ? $language['name'] : $lang_code;
+                                                    echo esc_html( $flag . ' ' . $name );
+                                                    ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </select>
                                     <p class="description"><?php _e( 'The default language for your website.', 'wp-hreflang-manager' ); ?></p>
                                 </td>
@@ -465,6 +473,12 @@ class WP_Hreflang_Admin_Settings {
             wp_send_json_error( array( 'message' => 'Language not found' ) );
         }
 
+        // Check if this is the default language
+        $default_language = isset( $options['default_language'] ) ? $options['default_language'] : '';
+        if ( $lang_code === $default_language ) {
+            wp_send_json_error( array( 'message' => 'Cannot delete the default language. Please set a different default language first.' ) );
+        }
+
         unset( $options['languages'][ $lang_code ] );
 
         update_option( $this->options_key, $options );
@@ -555,6 +569,12 @@ class WP_Hreflang_Admin_Settings {
         $file_extension = pathinfo( $file['name'], PATHINFO_EXTENSION );
         if ( $file_extension !== 'json' ) {
             wp_send_json_error( array( 'message' => 'Invalid file type. Please upload a JSON file.' ) );
+        }
+
+        // Check file size (max 2MB)
+        $max_file_size = 2 * 1024 * 1024; // 2MB in bytes
+        if ( $file['size'] > $max_file_size ) {
+            wp_send_json_error( array( 'message' => 'File is too large. Maximum size is 2MB.' ) );
         }
 
         // Read file content

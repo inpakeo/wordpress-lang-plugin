@@ -103,8 +103,8 @@ class WP_Hreflang_Language_Switcher {
         $output .= '<select class="wp-hreflang-select" data-post-id="' . esc_attr( $post_id ) . '">';
 
         foreach ( $languages as $lang_code => $language ) {
-            $flag = $args['show_flags'] ? $language['flag'] . ' ' : '';
-            $name = $args['show_names'] ? $language['name'] : '';
+            $flag = $args['show_flags'] && isset( $language['flag'] ) ? $language['flag'] . ' ' : '';
+            $name = $args['show_names'] && isset( $language['name'] ) ? $language['name'] : '';
             $selected = ( $lang_code === $current_lang ) ? ' selected' : '';
 
             $output .= sprintf(
@@ -140,8 +140,8 @@ class WP_Hreflang_Language_Switcher {
         $output .= '<ul class="wp-hreflang-list-items">';
 
         foreach ( $languages as $lang_code => $language ) {
-            $flag = $args['show_flags'] ? $language['flag'] . ' ' : '';
-            $name = $args['show_names'] ? $language['name'] : '';
+            $flag = $args['show_flags'] && isset( $language['flag'] ) ? $language['flag'] . ' ' : '';
+            $name = $args['show_names'] && isset( $language['name'] ) ? $language['name'] : '';
             $is_current = ( $lang_code === $current_lang );
 
             // Get translation URL
@@ -209,6 +209,8 @@ class WP_Hreflang_Language_Switcher {
             }
 
             $class = $is_current ? 'wp-hreflang-flag wp-hreflang-current' : 'wp-hreflang-flag';
+            $name = isset( $language['name'] ) ? $language['name'] : $lang_code;
+            $flag = isset( $language['flag'] ) ? $language['flag'] : $lang_code;
 
             $output .= sprintf(
                 '<a href="%s" data-lang="%s" data-post-id="%d" class="%s" title="%s">%s</a>',
@@ -216,8 +218,8 @@ class WP_Hreflang_Language_Switcher {
                 esc_attr( $lang_code ),
                 $post_id,
                 esc_attr( $class ),
-                esc_attr( $language['name'] ),
-                esc_html( $language['flag'] )
+                esc_attr( $name ),
+                esc_html( $flag )
             );
         }
 
@@ -258,7 +260,17 @@ class WP_Hreflang_Language_Switcher {
      */
     private static function get_current_url() {
         global $wp;
-        $current_url = home_url( add_query_arg( array(), $wp->request ) );
+
+        // Get full current URL with protocol and query string
+        $current_url = home_url( $wp->request );
+
+        // Add query string if present
+        if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
+            $query_string = sanitize_text_field( wp_unslash( $_SERVER['QUERY_STRING'] ) );
+            $current_url = add_query_arg( $query_string, '', $current_url );
+        }
+
+        // Remove lang parameter if exists
         return remove_query_arg( 'lang', $current_url );
     }
 }

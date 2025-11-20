@@ -108,7 +108,7 @@ class WP_Hreflang_Language_Manager {
      */
     private function set_current_language() {
         $options = $this->get_options();
-        $default_language = $options['default_language'];
+        $default_language = isset( $options['default_language'] ) ? $options['default_language'] : 'en';
 
         // Check URL parameter
         if ( isset( $_GET['lang'] ) && $this->is_valid_language( sanitize_text_field( $_GET['lang'] ) ) ) {
@@ -118,13 +118,17 @@ class WP_Hreflang_Language_Manager {
         }
 
         // Check cookie
-        if ( isset( $_COOKIE['wp_hreflang_language'] ) && $this->is_valid_language( $_COOKIE['wp_hreflang_language'] ) ) {
-            $this->current_language = sanitize_text_field( $_COOKIE['wp_hreflang_language'] );
-            return;
+        if ( isset( $_COOKIE['wp_hreflang_language'] ) ) {
+            $cookie_lang = sanitize_text_field( wp_unslash( $_COOKIE['wp_hreflang_language'] ) );
+            if ( $this->is_valid_language( $cookie_lang ) ) {
+                $this->current_language = $cookie_lang;
+                return;
+            }
         }
 
         // Check browser language
-        if ( $options['auto_redirect'] && ! empty( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
+        $auto_redirect = isset( $options['auto_redirect'] ) ? $options['auto_redirect'] : false;
+        if ( $auto_redirect && ! empty( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
             $browser_lang = $this->get_browser_language();
             if ( $browser_lang ) {
                 $this->current_language = $browser_lang;
@@ -153,8 +157,16 @@ class WP_Hreflang_Language_Manager {
         $accepted = explode( ',', $accept_language );
 
         foreach ( $accepted as $lang ) {
-            $lang_code = substr( $lang, 0, 2 );
-            if ( isset( $languages[ $lang_code ] ) && $languages[ $lang_code ]['enabled'] ) {
+            // Parse language code from Accept-Language format (e.g., "en-US;q=0.9" or "en")
+            $lang = trim( $lang );
+            // Remove quality value if present
+            $lang_parts = explode( ';', $lang );
+            $lang_code = $lang_parts[0];
+
+            // Extract just the language part (first 2 characters before any dash)
+            $lang_code = substr( $lang_code, 0, 2 );
+
+            if ( isset( $languages[ $lang_code ] ) && isset( $languages[ $lang_code ]['enabled'] ) && $languages[ $lang_code ]['enabled'] ) {
                 return $lang_code;
             }
         }
@@ -340,7 +352,7 @@ class WP_Hreflang_Language_Manager {
         $current_post_lang = get_post_meta( $post->ID, '_wp_hreflang_language', true );
         if ( empty( $current_post_lang ) ) {
             $options = $this->get_options();
-            $current_post_lang = $options['default_language'];
+            $current_post_lang = isset( $options['default_language'] ) ? $options['default_language'] : 'en';
         }
 
         $languages = $this->get_enabled_languages();
@@ -463,9 +475,11 @@ class WP_Hreflang_Language_Manager {
                     }
 
                     $post_lang = get_post_meta( $post_id, '_wp_hreflang_language', true );
-                    $reverse_translations[ $post_lang ] = $post_id;
-
-                    update_post_meta( $translation_id, '_wp_hreflang_translations', $reverse_translations );
+                    // Only set reverse translation if post_lang is valid
+                    if ( ! empty( $post_lang ) ) {
+                        $reverse_translations[ $post_lang ] = $post_id;
+                        update_post_meta( $translation_id, '_wp_hreflang_translations', $reverse_translations );
+                    }
                 }
             }
         }
@@ -505,7 +519,7 @@ class WP_Hreflang_Language_Manager {
         $post_lang = get_post_meta( $post_id, '_wp_hreflang_language', true );
         if ( empty( $post_lang ) ) {
             $options = $this->get_options();
-            $post_lang = $options['default_language'];
+            $post_lang = isset( $options['default_language'] ) ? $options['default_language'] : 'en';
         }
 
         $translations[ $post_lang ] = $post_id;

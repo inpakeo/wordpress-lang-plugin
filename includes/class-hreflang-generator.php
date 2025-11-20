@@ -105,7 +105,7 @@ class WP_Hreflang_Generator {
 
         // Get URLs for all translations
         foreach ( $translations as $lang_code => $trans_post_id ) {
-            if ( ! isset( $languages[ $lang_code ] ) ) {
+            if ( ! isset( $languages[ $lang_code ] ) || ! isset( $languages[ $lang_code ]['hreflang'] ) ) {
                 continue;
             }
 
@@ -234,7 +234,14 @@ class WP_Hreflang_Generator {
     private function get_current_url() {
         global $wp;
 
-        $current_url = home_url( add_query_arg( array(), $wp->request ) );
+        // Get full current URL with protocol and query string
+        $current_url = home_url( $wp->request );
+
+        // Add query string if present
+        if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
+            $query_string = sanitize_text_field( wp_unslash( $_SERVER['QUERY_STRING'] ) );
+            $current_url = add_query_arg( $query_string, '', $current_url );
+        }
 
         // Remove lang parameter if exists
         $current_url = remove_query_arg( 'lang', $current_url );
