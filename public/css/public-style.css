@@ -1,0 +1,185 @@
+/**
+ * Public Styles for WP Hreflang Manager
+ *
+ * @package WP_Hreflang_Manager
+ */
+
+/* General Switcher Styles */
+.wp-hreflang-switcher {
+    display: inline-block;
+    margin: 10px 0;
+}
+
+/* Dropdown Style */
+.wp-hreflang-dropdown {
+    position: relative;
+}
+
+.wp-hreflang-dropdown select.wp-hreflang-select {
+    padding: 8px 30px 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%206l5%205%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%23555%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 12px;
+    min-width: 150px;
+    transition: border-color 0.3s ease;
+}
+
+.wp-hreflang-dropdown select.wp-hreflang-select:hover {
+    border-color: #999;
+}
+
+.wp-hreflang-dropdown select.wp-hreflang-select:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+/* List Style */
+.wp-hreflang-list {
+    display: block;
+}
+
+.wp-hreflang-list ul.wp-hreflang-list-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.wp-hreflang-list ul.wp-hreflang-list-items li {
+    margin: 0;
+    padding: 0;
+}
+
+.wp-hreflang-list ul.wp-hreflang-list-items li a.wp-hreflang-link {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 14px;
+}
+
+.wp-hreflang-list ul.wp-hreflang-list-items li a.wp-hreflang-link:hover {
+    background-color: #e0e0e0;
+    color: #000;
+}
+
+.wp-hreflang-list ul.wp-hreflang-list-items li.wp-hreflang-current a.wp-hreflang-link {
+    background-color: #2271b1;
+    color: #fff;
+    font-weight: 600;
+}
+
+.wp-hreflang-list ul.wp-hreflang-list-items li.wp-hreflang-current a.wp-hreflang-link:hover {
+    background-color: #135e96;
+    color: #fff;
+}
+
+/* Flags Style */
+.wp-hreflang-flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.wp-hreflang-flags a.wp-hreflang-flag {
+    display: inline-block;
+    font-size: 24px;
+    text-decoration: none;
+    opacity: 0.6;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    line-height: 1;
+}
+
+.wp-hreflang-flags a.wp-hreflang-flag:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.wp-hreflang-flags a.wp-hreflang-flag.wp-hreflang-current {
+    opacity: 1;
+    transform: scale(1.2);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* Widget Styles */
+.widget .wp-hreflang-switcher {
+    display: block;
+    width: 100%;
+}
+
+.widget .wp-hreflang-dropdown select.wp-hreflang-select {
+    width: 100%;
+}
+
+.widget .wp-hreflang-list ul.wp-hreflang-list-items {
+    flex-direction: column;
+    gap: 5px;
+}
+
+.widget .wp-hreflang-list ul.wp-hreflang-list-items li a.wp-hreflang-link {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.widget .wp-hreflang-flags {
+    justify-content: center;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .wp-hreflang-list ul.wp-hreflang-list-items {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .wp-hreflang-list ul.wp-hreflang-list-items li a.wp-hreflang-link {
+        display: block;
+        text-align: center;
+    }
+
+    .wp-hreflang-flags {
+        justify-content: center;
+    }
+
+    .wp-hreflang-dropdown select.wp-hreflang-select {
+        width: 100%;
+        max-width: 250px;
+    }
+}
+
+/* Loading State */
+.wp-hreflang-switcher.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Accessibility */
+.wp-hreflang-link:focus,
+.wp-hreflang-select:focus,
+.wp-hreflang-flag:focus {
+    outline: 2px solid #2271b1;
+    outline-offset: 2px;
+}
+
+/* RTL Support */
+html[dir="rtl"] .wp-hreflang-dropdown select.wp-hreflang-select {
+    background-position: left 8px center;
+    padding: 8px 12px 8px 30px;
+}
