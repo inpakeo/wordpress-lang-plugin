@@ -387,7 +387,7 @@ class WP_Hreflang_Admin_Settings {
 
                                                     // Prepare flag display: SVG or emoji fallback
                                                     if ( ! empty( $flag_svg_url ) ) {
-                                                        $flag_display = sprintf( '<img src="%s" alt="%s" class="flag-svg" />',
+                                                        $flag_display = sprintf( '<img src="%s" alt="%s" class="flag-svg" style="width:28px!important;height:28px!important;display:block!important;object-fit:cover!important;" />',
                                                             esc_url( $flag_svg_url ),
                                                             esc_attr( $lang_data['name'] )
                                                         );
@@ -805,7 +805,7 @@ class WP_Hreflang_Admin_Settings {
                     // Update dropdown display with SVG flag or emoji fallback
                     if (selectedFlag) {
                         if (flagSvg) {
-                            selectedFlag.innerHTML = '<img src="' + flagSvg + '" alt="' + name + '" class="flag-svg" />';
+                            selectedFlag.innerHTML = '<img src="' + flagSvg + '" alt="' + name + '" class="flag-svg" style="width:24px!important;height:24px!important;display:block!important;object-fit:cover!important;" />';
                         } else {
                             selectedFlag.textContent = flag;
                         }

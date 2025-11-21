@@ -139,7 +139,7 @@ class WP_Hreflang_Language_Switcher {
         if ( $args['show_flags'] ) {
             if ( $current_flag_data['type'] === 'svg' ) {
                 $current_flag_html = sprintf(
-                    '<img src="%s" alt="%s" class="flag-svg" />',
+                    '<img src="%s" alt="%s" class="flag-svg" style="width:22px!important;height:22px!important;display:inline-block!important;object-fit:cover!important;" />',
                     esc_url( $current_flag_data['url'] ),
                     esc_attr( $current_name )
                 );
@@ -190,7 +190,7 @@ class WP_Hreflang_Language_Switcher {
             if ( $args['show_flags'] ) {
                 if ( $flag_data['type'] === 'svg' ) {
                     $flag_html = sprintf(
-                        '<img src="%s" alt="%s" class="flag-svg" />',
+                        '<img src="%s" alt="%s" class="flag-svg" style="width:22px!important;height:22px!important;display:inline-block!important;object-fit:cover!important;" />',
                         esc_url( $flag_data['url'] ),
                         esc_attr( $name )
                     );
@@ -266,7 +266,7 @@ class WP_Hreflang_Language_Switcher {
             if ( $args['show_flags'] ) {
                 if ( $flag_data['type'] === 'svg' ) {
                     $flag_html = sprintf(
-                        '<img src="%s" alt="%s" class="flag-svg" /> ',
+                        '<img src="%s" alt="%s" class="flag-svg" style="width:20px!important;height:20px!important;display:inline-block!important;object-fit:cover!important;" /> ',
                         esc_url( $flag_data['url'] ),
                         esc_attr( $name )
                     );
@@ -334,7 +334,7 @@ class WP_Hreflang_Language_Switcher {
             // Build flag HTML
             if ( $flag_data['type'] === 'svg' ) {
                 $flag_html = sprintf(
-                    '<img src="%s" alt="%s" class="flag-svg" />',
+                    '<img src="%s" alt="%s" class="flag-svg" style="width:32px!important;height:32px!important;display:inline-block!important;object-fit:cover!important;" />',
                     esc_url( $flag_data['url'] ),
                     esc_attr( $name )
                 );
