@@ -10,17 +10,11 @@
     margin: 10px 0;
 }
 
-/* SVG Flag Styles - Very specific to override everything */
-.wp-hreflang-switcher img.flag-svg,
-.wp-hreflang-switcher .flag-svg,
+/* SVG Flag Styles */
 img.flag-svg {
     display: inline-block !important;
     width: 20px !important;
     height: 20px !important;
-    min-width: 20px !important;
-    min-height: 20px !important;
-    max-width: 20px !important;
-    max-height: 20px !important;
     object-fit: cover !important;
     border-radius: 2px !important;
     vertical-align: middle !important;
@@ -65,16 +59,9 @@ img.flag-svg {
     font-size: 20px;
 }
 
-.wp-hreflang-dropdown-trigger .wp-hreflang-current-flag img.flag-svg,
-.wp-hreflang-dropdown-trigger .wp-hreflang-current-flag .flag-svg,
-.wp-hreflang-current-flag img.flag-svg,
-.wp-hreflang-current-flag .flag-svg {
+.wp-hreflang-current-flag img.flag-svg {
     width: 22px !important;
     height: 22px !important;
-    min-width: 22px !important;
-    min-height: 22px !important;
-    max-width: 22px !important;
-    max-height: 22px !important;
 }
 
 .wp-hreflang-current-name {
@@ -140,16 +127,9 @@ img.flag-svg {
     font-size: 20px;
 }
 
-.wp-hreflang-dropdown-item .wp-hreflang-item-flag img.flag-svg,
-.wp-hreflang-dropdown-item .wp-hreflang-item-flag .flag-svg,
-.wp-hreflang-item-flag img.flag-svg,
-.wp-hreflang-item-flag .flag-svg {
+.wp-hreflang-item-flag img.flag-svg {
     width: 22px !important;
     height: 22px !important;
-    min-width: 22px !important;
-    min-height: 22px !important;
-    max-width: 22px !important;
-    max-height: 22px !important;
 }
 
 .wp-hreflang-item-name {
@@ -248,15 +228,9 @@ img.flag-svg {
     line-height: 1;
 }
 
-.wp-hreflang-flags a.wp-hreflang-flag img.flag-svg,
-.wp-hreflang-flags a.wp-hreflang-flag .flag-svg,
-.wp-hreflang-flags .flag-svg {
+.wp-hreflang-flags img.flag-svg {
     width: 32px !important;
     height: 32px !important;
-    min-width: 32px !important;
-    min-height: 32px !important;
-    max-width: 32px !important;
-    max-height: 32px !important;
     border-radius: 4px !important;
 }
 
@@ -300,33 +274,14 @@ img.flag-svg {
 @media (max-width: 768px) {
     /* Smaller flags on mobile */
     .wp-hreflang-current-flag img.flag-svg,
-    .wp-hreflang-current-flag .flag-svg {
+    .wp-hreflang-item-flag img.flag-svg {
         width: 20px !important;
         height: 20px !important;
-        min-width: 20px !important;
-        min-height: 20px !important;
-        max-width: 20px !important;
-        max-height: 20px !important;
     }
 
-    .wp-hreflang-item-flag img.flag-svg,
-    .wp-hreflang-item-flag .flag-svg {
-        width: 20px !important;
-        height: 20px !important;
-        min-width: 20px !important;
-        min-height: 20px !important;
-        max-width: 20px !important;
-        max-height: 20px !important;
-    }
-
-    .wp-hreflang-flags a.wp-hreflang-flag img.flag-svg,
-    .wp-hreflang-flags a.wp-hreflang-flag .flag-svg {
+    .wp-hreflang-flags img.flag-svg {
         width: 28px !important;
         height: 28px !important;
-        min-width: 28px !important;
-        min-height: 28px !important;
-        max-width: 28px !important;
-        max-height: 28px !important;
     }
 
     /* Adjust dropdown trigger */
@@ -343,25 +298,14 @@ img.flag-svg {
 @media (max-width: 480px) {
     /* Even smaller on very small screens */
     .wp-hreflang-current-flag img.flag-svg,
-    .wp-hreflang-current-flag .flag-svg,
-    .wp-hreflang-item-flag img.flag-svg,
-    .wp-hreflang-item-flag .flag-svg {
+    .wp-hreflang-item-flag img.flag-svg {
         width: 18px !important;
         height: 18px !important;
-        min-width: 18px !important;
-        min-height: 18px !important;
-        max-width: 18px !important;
-        max-height: 18px !important;
     }
 
-    .wp-hreflang-flags a.wp-hreflang-flag img.flag-svg,
-    .wp-hreflang-flags a.wp-hreflang-flag .flag-svg {
+    .wp-hreflang-flags img.flag-svg {
         width: 24px !important;
         height: 24px !important;
-        min-width: 24px !important;
-        min-height: 24px !important;
-        max-width: 24px !important;
-        max-height: 24px !important;
     }
 
     .wp-hreflang-dropdown-trigger {
