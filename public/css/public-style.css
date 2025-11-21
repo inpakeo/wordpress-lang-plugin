@@ -10,11 +10,133 @@
     margin: 10px 0;
 }
 
+/* SVG Flag Styles */
+.wp-hreflang-switcher .flag-svg {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
+    border-radius: 2px;
+    vertical-align: middle;
+}
+
 /* Dropdown Style */
 .wp-hreflang-dropdown {
     position: relative;
 }
 
+/* Custom Dropdown */
+.wp-hreflang-custom-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.wp-hreflang-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.wp-hreflang-dropdown-trigger:hover {
+    border-color: #2271b1;
+}
+
+.wp-hreflang-dropdown-trigger.active {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+.wp-hreflang-current-flag {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+}
+
+.wp-hreflang-current-flag .flag-svg {
+    width: 24px;
+    height: 24px;
+}
+
+.wp-hreflang-current-name {
+    flex: 1;
+    font-size: 14px;
+}
+
+.wp-hreflang-dropdown-arrow {
+    font-size: 10px;
+    color: #666;
+    transition: transform 0.3s ease;
+}
+
+.wp-hreflang-dropdown-trigger.active .wp-hreflang-dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.wp-hreflang-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 4px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.wp-hreflang-dropdown-menu.active {
+    max-height: 300px;
+    opacity: 1;
+    overflow-y: auto;
+}
+
+.wp-hreflang-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.wp-hreflang-dropdown-item:hover {
+    background: #f0f0f0;
+}
+
+.wp-hreflang-dropdown-item.wp-hreflang-current {
+    background: #e7f3ff;
+    font-weight: 600;
+}
+
+.wp-hreflang-item-flag {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+}
+
+.wp-hreflang-item-flag .flag-svg {
+    width: 24px;
+    height: 24px;
+}
+
+.wp-hreflang-item-name {
+    font-size: 14px;
+}
+
+/* Old select dropdown (fallback/legacy) */
 .wp-hreflang-dropdown select.wp-hreflang-select {
     padding: 8px 30px 8px 12px;
     border: 1px solid #ddd;
@@ -104,6 +226,12 @@
     opacity: 0.6;
     transition: opacity 0.3s ease, transform 0.3s ease;
     line-height: 1;
+}
+
+.wp-hreflang-flags a.wp-hreflang-flag .flag-svg {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
 }
 
 .wp-hreflang-flags a.wp-hreflang-flag:hover {

@@ -16,6 +16,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WP_Hreflang_Language_Switcher {
 
     /**
+     * Get SVG flag URL or emoji fallback
+     *
+     * @param string $lang_code Language code (e.g., 'en', 'fr', 'de')
+     * @param string $emoji_fallback Emoji flag fallback
+     * @return array Array with 'type' (svg|emoji) and 'content' (URL or emoji)
+     */
+    private static function get_flag_display( $lang_code, $emoji_fallback = '' ) {
+        // Extract 2-letter code from full code (e.g., "cs" from "cs-CZ")
+        $code = strtolower( substr( explode( '-', $lang_code )[0], 0, 2 ) );
+
+        // Build path to SVG file (using 1x1 square format)
+        $svg_path = WP_HREFLANG_PLUGIN_DIR . 'public/images/flags/1x1/' . $code . '.svg';
+
+        // Check if SVG exists
+        if ( file_exists( $svg_path ) ) {
+            return array(
+                'type' => 'svg',
+                'url' => WP_HREFLANG_PLUGIN_URL . 'public/images/flags/1x1/' . $code . '.svg',
+                'alt' => $code
+            );
+        }
+
+        return array(
+            'type' => 'emoji',
+            'content' => $emoji_fallback
+        );
+    }
+
+    /**
      * Render language switcher
      *
      * @param array $args Arguments for rendering.
@@ -97,27 +126,101 @@ class WP_Hreflang_Language_Switcher {
     private static function render_dropdown( $languages, $current_lang, $args ) {
         global $post;
 
+        $language_manager = WP_Hreflang_Language_Manager::get_instance();
         $post_id = is_singular() && $post ? $post->ID : 0;
 
-        $output = '<div class="wp-hreflang-switcher wp-hreflang-dropdown">';
-        $output .= '<select class="wp-hreflang-select" data-post-id="' . esc_attr( $post_id ) . '">';
+        // Get current language data
+        $current_language = isset( $languages[ $current_lang ] ) ? $languages[ $current_lang ] : array();
+        $current_flag_data = self::get_flag_display( $current_lang, isset( $current_language['flag'] ) ? $current_language['flag'] : '' );
+        $current_name = isset( $current_language['name'] ) ? $current_language['name'] : $current_lang;
 
-        foreach ( $languages as $lang_code => $language ) {
-            $flag = $args['show_flags'] && isset( $language['flag'] ) ? $language['flag'] . ' ' : '';
-            $name = $args['show_names'] && isset( $language['name'] ) ? $language['name'] : '';
-            $selected = ( $lang_code === $current_lang ) ? ' selected' : '';
-
-            $output .= sprintf(
-                '<option value="%s"%s>%s%s</option>',
-                esc_attr( $lang_code ),
-                $selected,
-                esc_html( $flag ),
-                esc_html( $name )
-            );
+        // Build current flag display
+        $current_flag_html = '';
+        if ( $args['show_flags'] ) {
+            if ( $current_flag_data['type'] === 'svg' ) {
+                $current_flag_html = sprintf(
+                    '<img src="%s" alt="%s" class="flag-svg" />',
+                    esc_url( $current_flag_data['url'] ),
+                    esc_attr( $current_name )
+                );
+            } else {
+                $current_flag_html = esc_html( $current_flag_data['content'] );
+            }
         }
 
-        $output .= '</select>';
+        $current_display_name = $args['show_names'] ? $current_name : '';
+
+        $output = '<div class="wp-hreflang-switcher wp-hreflang-dropdown wp-hreflang-custom-dropdown">';
+
+        // Dropdown trigger
+        $output .= '<div class="wp-hreflang-dropdown-trigger" data-post-id="' . esc_attr( $post_id ) . '">';
+        if ( $args['show_flags'] ) {
+            $output .= '<span class="wp-hreflang-current-flag">' . $current_flag_html . '</span>';
+        }
+        if ( $args['show_names'] ) {
+            $output .= '<span class="wp-hreflang-current-name">' . esc_html( $current_display_name ) . '</span>';
+        }
+        $output .= '<span class="wp-hreflang-dropdown-arrow">▼</span>';
         $output .= '</div>';
+
+        // Dropdown menu
+        $output .= '<div class="wp-hreflang-dropdown-menu">';
+
+        foreach ( $languages as $lang_code => $language ) {
+            $is_current = ( $lang_code === $current_lang );
+
+            // Get translation URL
+            $url = '#';
+            if ( $post_id > 0 ) {
+                $translation_id = $language_manager->get_translation( $post_id, $lang_code );
+                if ( $translation_id ) {
+                    $url = get_permalink( $translation_id );
+                } else {
+                    $url = add_query_arg( 'lang', $lang_code, home_url( '/' ) );
+                }
+            } else {
+                $url = add_query_arg( 'lang', $lang_code, self::get_current_url() );
+            }
+
+            $flag_data = self::get_flag_display( $lang_code, isset( $language['flag'] ) ? $language['flag'] : '' );
+            $name = isset( $language['name'] ) ? $language['name'] : $lang_code;
+
+            // Build flag HTML
+            $flag_html = '';
+            if ( $args['show_flags'] ) {
+                if ( $flag_data['type'] === 'svg' ) {
+                    $flag_html = sprintf(
+                        '<img src="%s" alt="%s" class="flag-svg" />',
+                        esc_url( $flag_data['url'] ),
+                        esc_attr( $name )
+                    );
+                } else {
+                    $flag_html = esc_html( $flag_data['content'] );
+                }
+            }
+
+            $item_class = $is_current ? 'wp-hreflang-dropdown-item wp-hreflang-current' : 'wp-hreflang-dropdown-item';
+
+            $output .= sprintf(
+                '<a href="%s" class="%s" data-lang="%s">',
+                esc_url( $url ),
+                esc_attr( $item_class ),
+                esc_attr( $lang_code )
+            );
+
+            if ( $args['show_flags'] ) {
+                $output .= '<span class="wp-hreflang-item-flag">' . $flag_html . '</span>';
+            }
+
+            if ( $args['show_names'] ) {
+                $output .= '<span class="wp-hreflang-item-name">' . esc_html( $name ) . '</span>';
+            }
+
+            $output .= '</a>';
+        }
+
+        $output .= '</div>'; // .wp-hreflang-dropdown-menu
+        $output .= '</div>'; // .wp-hreflang-switcher
 
         return $output;
     }
@@ -140,8 +243,6 @@ class WP_Hreflang_Language_Switcher {
         $output .= '<ul class="wp-hreflang-list-items">';
 
         foreach ( $languages as $lang_code => $language ) {
-            $flag = $args['show_flags'] && isset( $language['flag'] ) ? $language['flag'] . ' ' : '';
-            $name = $args['show_names'] && isset( $language['name'] ) ? $language['name'] : '';
             $is_current = ( $lang_code === $current_lang );
 
             // Get translation URL
@@ -157,6 +258,23 @@ class WP_Hreflang_Language_Switcher {
                 $url = add_query_arg( 'lang', $lang_code, self::get_current_url() );
             }
 
+            $flag_data = self::get_flag_display( $lang_code, isset( $language['flag'] ) ? $language['flag'] : '' );
+            $name = $args['show_names'] && isset( $language['name'] ) ? $language['name'] : '';
+
+            // Build flag HTML
+            $flag_html = '';
+            if ( $args['show_flags'] ) {
+                if ( $flag_data['type'] === 'svg' ) {
+                    $flag_html = sprintf(
+                        '<img src="%s" alt="%s" class="flag-svg" /> ',
+                        esc_url( $flag_data['url'] ),
+                        esc_attr( $name )
+                    );
+                } else {
+                    $flag_html = esc_html( $flag_data['content'] ) . ' ';
+                }
+            }
+
             $class = $is_current ? ' class="wp-hreflang-current"' : '';
 
             $output .= sprintf(
@@ -165,7 +283,7 @@ class WP_Hreflang_Language_Switcher {
                 esc_url( $url ),
                 esc_attr( $lang_code ),
                 $post_id,
-                esc_html( $flag ),
+                $flag_html,
                 esc_html( $name )
             );
         }
@@ -208,9 +326,21 @@ class WP_Hreflang_Language_Switcher {
                 $url = add_query_arg( 'lang', $lang_code, self::get_current_url() );
             }
 
-            $class = $is_current ? 'wp-hreflang-flag wp-hreflang-current' : 'wp-hreflang-flag';
+            $flag_data = self::get_flag_display( $lang_code, isset( $language['flag'] ) ? $language['flag'] : '' );
             $name = isset( $language['name'] ) ? $language['name'] : $lang_code;
-            $flag = isset( $language['flag'] ) ? $language['flag'] : $lang_code;
+
+            $class = $is_current ? 'wp-hreflang-flag wp-hreflang-current' : 'wp-hreflang-flag';
+
+            // Build flag HTML
+            if ( $flag_data['type'] === 'svg' ) {
+                $flag_html = sprintf(
+                    '<img src="%s" alt="%s" class="flag-svg" />',
+                    esc_url( $flag_data['url'] ),
+                    esc_attr( $name )
+                );
+            } else {
+                $flag_html = esc_html( $flag_data['content'] );
+            }
 
             $output .= sprintf(
                 '<a href="%s" data-lang="%s" data-post-id="%d" class="%s" title="%s">%s</a>',
@@ -219,7 +349,7 @@ class WP_Hreflang_Language_Switcher {
                 $post_id,
                 esc_attr( $class ),
                 esc_attr( $name ),
-                esc_html( $flag )
+                $flag_html
             );
         }
 

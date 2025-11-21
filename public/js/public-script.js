@@ -23,11 +23,67 @@
          * Bind events
          */
         bindEvents: function() {
-            // Dropdown switcher
+            // Dropdown switcher (old select)
             $(document).on('change', '.wp-hreflang-select', this.handleDropdownChange.bind(this));
+
+            // Custom dropdown trigger
+            $(document).on('click', '.wp-hreflang-dropdown-trigger', this.handleCustomDropdownToggle.bind(this));
+
+            // Custom dropdown items
+            $(document).on('click', '.wp-hreflang-dropdown-item', this.handleCustomDropdownItemClick.bind(this));
+
+            // Close dropdown when clicking outside
+            $(document).on('click', this.handleOutsideClick.bind(this));
 
             // Link/Flag switcher
             $(document).on('click', '.wp-hreflang-link, .wp-hreflang-flag', this.handleLinkClick.bind(this));
+        },
+
+        /**
+         * Handle custom dropdown toggle
+         */
+        handleCustomDropdownToggle: function(e) {
+            e.stopPropagation();
+            var $trigger = $(e.currentTarget);
+            var $menu = $trigger.siblings('.wp-hreflang-dropdown-menu');
+
+            // Close other dropdowns
+            $('.wp-hreflang-dropdown-menu.active').not($menu).removeClass('active');
+            $('.wp-hreflang-dropdown-trigger.active').not($trigger).removeClass('active');
+
+            // Toggle current dropdown
+            $trigger.toggleClass('active');
+            $menu.toggleClass('active');
+        },
+
+        /**
+         * Handle custom dropdown item click
+         */
+        handleCustomDropdownItemClick: function(e) {
+            e.preventDefault();
+
+            var $item = $(e.currentTarget);
+            var href = $item.attr('href');
+
+            // If link has valid href (not #), navigate
+            if (href && href !== '#') {
+                window.location.href = href;
+            }
+
+            // Close dropdown
+            var $dropdown = $item.closest('.wp-hreflang-custom-dropdown');
+            $dropdown.find('.wp-hreflang-dropdown-trigger').removeClass('active');
+            $dropdown.find('.wp-hreflang-dropdown-menu').removeClass('active');
+        },
+
+        /**
+         * Handle click outside dropdown
+         */
+        handleOutsideClick: function(e) {
+            if (!$(e.target).closest('.wp-hreflang-custom-dropdown').length) {
+                $('.wp-hreflang-dropdown-menu.active').removeClass('active');
+                $('.wp-hreflang-dropdown-trigger.active').removeClass('active');
+            }
         },
 
         /**
