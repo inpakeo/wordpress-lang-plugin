@@ -4,8 +4,8 @@
  * Plugin URI: https://github.com/inpakeo/wordpress-lang-plugin
  * Description: Simple and powerful multilingual WordPress plugin with automatic hreflang tags generation. Universal solution for any theme.
  * Version: 1.0.0
- * Author: Alexander Fedin
- * Author URI: https://github.com/o2alexanderfedin
+ * Author: X
+ * Author URI: X
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wp-hreflang-manager
