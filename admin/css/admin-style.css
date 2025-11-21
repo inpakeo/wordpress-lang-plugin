@@ -863,28 +863,35 @@
 
 /* SVG Flag Styles */
 .flag-svg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 4px;
     display: block;
+    object-fit: cover;
+    border-radius: 3px;
 }
 
 .selected-flag .flag-svg {
-    width: 28px;
-    height: 28px;
-    border-radius: 4px;
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px;
+    min-height: 24px;
+    max-width: 24px;
+    max-height: 24px;
+    border-radius: 3px;
 }
 
 .selected-flag svg {
-    width: 28px;
-    height: 28px;
+    width: 24px !important;
+    height: 24px !important;
     display: block;
 }
 
 .option-flag .flag-svg {
-    width: 32px;
-    height: 32px;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px;
+    min-height: 28px;
+    max-width: 28px;
+    max-height: 28px;
+    border-radius: 3px;
 }
 
 .option-text {
@@ -927,9 +934,27 @@
 
     .selected-flag,
     .option-flag {
-        font-size: 22px;
-        width: 28px;
-        height: 28px;
+        font-size: 20px;
+        width: 26px;
+        height: 26px;
+    }
+
+    .selected-flag .flag-svg {
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px;
+        min-height: 20px;
+        max-width: 20px;
+        max-height: 20px;
+    }
+
+    .option-flag .flag-svg {
+        width: 24px !important;
+        height: 24px !important;
+        min-width: 24px;
+        min-height: 24px;
+        max-width: 24px;
+        max-height: 24px;
     }
 
     .option-text {
