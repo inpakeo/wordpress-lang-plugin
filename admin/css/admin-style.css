@@ -861,37 +861,46 @@
     border-radius: 6px;
 }
 
-/* SVG Flag Styles */
+/* SVG Flag Styles - Very specific to override everything */
+img.flag-svg,
 .flag-svg {
-    display: block;
-    object-fit: cover;
-    border-radius: 3px;
+    display: block !important;
+    object-fit: cover !important;
+    border-radius: 3px !important;
 }
 
+.custom-language-dropdown .selected-flag img.flag-svg,
+.custom-language-dropdown .selected-flag .flag-svg,
+.dropdown-selected .selected-flag img.flag-svg,
+.dropdown-selected .selected-flag .flag-svg,
 .selected-flag .flag-svg {
     width: 24px !important;
     height: 24px !important;
-    min-width: 24px;
-    min-height: 24px;
-    max-width: 24px;
-    max-height: 24px;
-    border-radius: 3px;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    max-width: 24px !important;
+    max-height: 24px !important;
+    border-radius: 3px !important;
 }
 
 .selected-flag svg {
     width: 24px !important;
     height: 24px !important;
-    display: block;
+    display: block !important;
 }
 
+.custom-language-dropdown .option-flag img.flag-svg,
+.custom-language-dropdown .option-flag .flag-svg,
+.dropdown-option .option-flag img.flag-svg,
+.dropdown-option .option-flag .flag-svg,
 .option-flag .flag-svg {
     width: 28px !important;
     height: 28px !important;
-    min-width: 28px;
-    min-height: 28px;
-    max-width: 28px;
-    max-height: 28px;
-    border-radius: 3px;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    max-width: 28px !important;
+    max-height: 28px !important;
+    border-radius: 3px !important;
 }
 
 .option-text {
@@ -939,22 +948,24 @@
         height: 26px;
     }
 
+    .selected-flag img.flag-svg,
     .selected-flag .flag-svg {
         width: 20px !important;
         height: 20px !important;
-        min-width: 20px;
-        min-height: 20px;
-        max-width: 20px;
-        max-height: 20px;
+        min-width: 20px !important;
+        min-height: 20px !important;
+        max-width: 20px !important;
+        max-height: 20px !important;
     }
 
+    .option-flag img.flag-svg,
     .option-flag .flag-svg {
         width: 24px !important;
         height: 24px !important;
-        min-width: 24px;
-        min-height: 24px;
-        max-width: 24px;
-        max-height: 24px;
+        min-width: 24px !important;
+        min-height: 24px !important;
+        max-width: 24px !important;
+        max-height: 24px !important;
     }
 
     .option-text {
