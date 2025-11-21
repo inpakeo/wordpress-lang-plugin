@@ -49,6 +49,27 @@ class WP_Hreflang_Admin_Settings {
     }
 
     /**
+     * Get SVG flag URL
+     *
+     * @param string $lang_code Language code (e.g., 'en', 'fr', 'de')
+     * @return string URL to SVG flag or empty string
+     */
+    private static function get_flag_svg_url( $lang_code ) {
+        // Extract 2-letter code from full code (e.g., "cs" from "cs-CZ")
+        $code = strtolower( substr( explode( '-', $lang_code )[0], 0, 2 ) );
+
+        // Build path to SVG file (using 1x1 square format)
+        $svg_path = WP_HREFLANG_PLUGIN_DIR . 'public/images/flags/1x1/' . $code . '.svg';
+
+        // Check if SVG exists
+        if ( file_exists( $svg_path ) ) {
+            return WP_HREFLANG_PLUGIN_URL . 'public/images/flags/1x1/' . $code . '.svg';
+        }
+
+        return ''; // Return empty if no SVG found
+    }
+
+    /**
      * Initialize hooks
      */
     private function init_hooks() {
@@ -335,10 +356,73 @@ class WP_Hreflang_Admin_Settings {
                                         <span class="dashicons dashicons-translation"></span>
                                         <?php _e( 'Quick Select', 'wp-hreflang-manager' ); ?>
                                     </label>
-                                    <select id="language-quick-select" class="quick-select-dropdown">
+
+                                    <!-- Custom dropdown container -->
+                                    <div class="custom-language-dropdown">
+                                        <div class="dropdown-selected" id="custom-dropdown-trigger">
+                                            <span class="selected-flag">
+                                                <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle cx="256" cy="256" r="256" fill="#4a90e2"/>
+                                                    <text x="256" y="320" font-size="200" text-anchor="middle" fill="white">🌐</text>
+                                                </svg>
+                                            </span>
+                                            <span class="selected-text"><?php _e( '-- Choose a language --', 'wp-hreflang-manager' ); ?></span>
+                                            <span class="dropdown-arrow">▼</span>
+                                        </div>
+
+                                        <div class="dropdown-menu" id="custom-dropdown-menu">
+                                            <div class="dropdown-search">
+                                                <input type="text"
+                                                       id="language-search"
+                                                       placeholder="<?php _e( 'Search language...', 'wp-hreflang-manager' ); ?>"
+                                                       autocomplete="off">
+                                            </div>
+                                            <div class="dropdown-options" id="dropdown-options">
+                                                <?php
+                                                $available_langs = self::get_available_languages_database();
+                                                foreach ( $available_langs as $code => $lang_data ) {
+                                                    $flag_emoji = $lang_data['flag'];
+                                                    $two_letter_code = substr( explode( '-', $code )[0], 0, 2 );
+                                                    $flag_svg_url = self::get_flag_svg_url( $code );
+
+                                                    // Prepare flag display: SVG or emoji fallback
+                                                    if ( ! empty( $flag_svg_url ) ) {
+                                                        $flag_display = sprintf( '<img src="%s" alt="%s" class="flag-svg" />',
+                                                            esc_url( $flag_svg_url ),
+                                                            esc_attr( $lang_data['name'] )
+                                                        );
+                                                    } else {
+                                                        $flag_display = esc_html( $flag_emoji );
+                                                    }
+
+                                                    printf(
+                                                        '<div class="dropdown-option" data-value="%s" data-name="%s" data-hreflang="%s" data-flag="%s" data-flag-svg="%s" data-search="%s">
+                                                            <span class="option-flag">%s</span>
+                                                            <span class="option-text">
+                                                                <span class="option-name">%s</span>
+                                                                <span class="option-code">%s</span>
+                                                            </span>
+                                                        </div>',
+                                                        esc_attr( $code ),
+                                                        esc_attr( $lang_data['name'] ),
+                                                        esc_attr( $lang_data['hreflang'] ),
+                                                        esc_attr( $flag_emoji ),
+                                                        esc_attr( $flag_svg_url ),
+                                                        esc_attr( strtolower( $lang_data['name'] . ' ' . $code ) ),
+                                                        $flag_display,
+                                                        esc_html( $lang_data['name'] ),
+                                                        esc_html( $code )
+                                                    );
+                                                }
+                                                ?>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Hidden select for form submission (fallback) -->
+                                    <select id="language-quick-select" class="quick-select-dropdown" style="display: none;">
                                         <option value=""><?php _e( '-- Choose a language --', 'wp-hreflang-manager' ); ?></option>
                                         <?php
-                                        $available_langs = self::get_available_languages_database();
                                         foreach ( $available_langs as $code => $lang_data ) {
                                             printf(
                                                 '<option value="%s" data-name="%s" data-hreflang="%s" data-flag="%s">%s %s</option>',
@@ -352,7 +436,8 @@ class WP_Hreflang_Admin_Settings {
                                         }
                                         ?>
                                     </select>
-                                    <p class="help-text"><?php _e( 'Select from 70+ pre-configured languages', 'wp-hreflang-manager' ); ?></p>
+
+                                    <p class="help-text"><?php _e( 'Select from 70+ pre-configured languages with search', 'wp-hreflang-manager' ); ?></p>
                                 </div>
 
                                 <div class="divider-or">
@@ -599,45 +684,180 @@ class WP_Hreflang_Admin_Settings {
             </div>
         </div>
 
-        <!-- Forced inline script for debugging -->
+        <!-- Custom Language Dropdown Script -->
         <script>
-            console.log('=== INLINE SCRIPT LOADED ===');
-            console.log('Current URL:', window.location.href);
-            console.log('Document ready state:', document.readyState);
+        (function() {
+            console.log('🎨 Custom dropdown script loaded');
 
-            // Check if our script loaded
-            setTimeout(() => {
-                console.log('=== CHECKING AFTER 1 SECOND ===');
-                const quickSelect = document.getElementById('language-quick-select');
-                console.log('Quick select element found:', !!quickSelect);
+            const dropdownTrigger = document.getElementById('custom-dropdown-trigger');
+            const dropdownMenu = document.getElementById('custom-dropdown-menu');
+            const searchInput = document.getElementById('language-search');
+            const dropdownOptions = document.getElementById('dropdown-options');
+            const selectedFlag = document.querySelector('.selected-flag');
+            const selectedText = document.querySelector('.selected-text');
 
-                if (quickSelect) {
-                    console.log('Quick select HTML:', quickSelect.outerHTML.substring(0, 200));
+            if (!dropdownTrigger || !dropdownMenu) {
+                console.warn('Dropdown elements not found');
+                return;
+            }
 
-                    // Manual event listener as fallback
-                    quickSelect.addEventListener('change', function(e) {
-                        console.log('🔥 MANUAL HANDLER: Quick select changed!');
-                        const option = e.target.options[e.target.selectedIndex];
-                        console.log('Selected:', option.value, option.dataset);
+            // Toggle dropdown
+            dropdownTrigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isActive = dropdownMenu.classList.contains('active');
 
-                        if (option.value) {
-                            // Extract 2-letter code from full code (e.g., "cs" from "cs-CZ")
-                            const fullCode = option.value;
-                            const twoLetterCode = fullCode.split('-')[0].substring(0, 2);
-
-                            console.log('Full code:', fullCode, 'Two-letter code:', twoLetterCode);
-
-                            document.getElementById('new-lang-code').value = twoLetterCode;
-                            document.getElementById('new-lang-name').value = option.dataset.name || '';
-                            document.getElementById('new-lang-hreflang').value = option.dataset.hreflang || '';
-                            document.getElementById('new-lang-flag').value = option.dataset.flag || '';
-                            e.target.selectedIndex = 0;
-                            console.log('✅ Fields filled! Code:', twoLetterCode, 'Hreflang:', option.dataset.hreflang);
-                        }
-                    });
-                    console.log('✅ Manual event listener attached!');
+                if (isActive) {
+                    closeDropdown();
+                } else {
+                    openDropdown();
                 }
-            }, 1000);
+            });
+
+            function openDropdown() {
+                dropdownTrigger.classList.add('active');
+                dropdownMenu.classList.add('active');
+                setTimeout(() => searchInput && searchInput.focus(), 100);
+                console.log('Dropdown opened');
+            }
+
+            function closeDropdown() {
+                dropdownTrigger.classList.remove('active');
+                dropdownMenu.classList.remove('active');
+                if (searchInput) searchInput.value = '';
+                showAllOptions();
+                console.log('Dropdown closed');
+            }
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!dropdownTrigger.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    closeDropdown();
+                }
+            });
+
+            // Search functionality
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const searchTerm = e.target.value.toLowerCase().trim();
+                    console.log('Searching:', searchTerm);
+                    filterOptions(searchTerm);
+                });
+
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        closeDropdown();
+                    }
+                });
+            }
+
+            function filterOptions(searchTerm) {
+                const options = dropdownOptions.querySelectorAll('.dropdown-option');
+                let visibleCount = 0;
+
+                options.forEach(option => {
+                    const searchData = option.dataset.search || '';
+                    if (!searchTerm || searchData.includes(searchTerm)) {
+                        option.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        option.classList.add('hidden');
+                    }
+                });
+
+                // Show no results message
+                let noResultsMsg = dropdownOptions.querySelector('.dropdown-no-results');
+                if (visibleCount === 0) {
+                    if (!noResultsMsg) {
+                        noResultsMsg = document.createElement('div');
+                        noResultsMsg.className = 'dropdown-no-results';
+                        noResultsMsg.textContent = 'No languages found';
+                        dropdownOptions.appendChild(noResultsMsg);
+                    }
+                } else if (noResultsMsg) {
+                    noResultsMsg.remove();
+                }
+            }
+
+            function showAllOptions() {
+                const options = dropdownOptions.querySelectorAll('.dropdown-option');
+                options.forEach(option => option.classList.remove('hidden'));
+                const noResultsMsg = dropdownOptions.querySelector('.dropdown-no-results');
+                if (noResultsMsg) noResultsMsg.remove();
+            }
+
+            // Handle option selection
+            if (dropdownOptions) {
+                dropdownOptions.addEventListener('click', function(e) {
+                    const option = e.target.closest('.dropdown-option');
+                    if (!option) return;
+
+                    const fullCode = option.dataset.value;
+                    const name = option.dataset.name;
+                    const hreflang = option.dataset.hreflang;
+                    const flag = option.dataset.flag;
+                    const flagSvg = option.dataset.flagSvg;
+
+                    // Extract 2-letter code
+                    const twoLetterCode = fullCode.split('-')[0].substring(0, 2);
+
+                    console.log('🎯 Selected language:', {fullCode, twoLetterCode, name, hreflang, flag, flagSvg});
+
+                    // Update dropdown display with SVG flag or emoji fallback
+                    if (selectedFlag) {
+                        if (flagSvg) {
+                            selectedFlag.innerHTML = '<img src="' + flagSvg + '" alt="' + name + '" class="flag-svg" />';
+                        } else {
+                            selectedFlag.textContent = flag;
+                        }
+                    }
+                    if (selectedText) selectedText.textContent = name + ' (' + fullCode + ')';
+
+                    // Mark option as selected
+                    document.querySelectorAll('.dropdown-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    option.classList.add('selected');
+
+                    // Fill form fields
+                    const codeInput = document.getElementById('new-lang-code');
+                    const nameInput = document.getElementById('new-lang-name');
+                    const hreflangInput = document.getElementById('new-lang-hreflang');
+                    const flagInput = document.getElementById('new-lang-flag');
+
+                    if (codeInput) codeInput.value = twoLetterCode;
+                    if (nameInput) nameInput.value = name;
+                    if (hreflangInput) hreflangInput.value = hreflang;
+                    if (flagInput) flagInput.value = flag;
+
+                    console.log('✅ Fields filled! Code:', twoLetterCode);
+
+                    // Close dropdown
+                    setTimeout(() => closeDropdown(), 200);
+
+                    // Focus add button
+                    const addBtn = document.getElementById('add-language-btn');
+                    if (addBtn) setTimeout(() => addBtn.focus(), 300);
+                });
+            }
+
+            // Reset dropdown display when language is added
+            const addBtn = document.getElementById('add-language-btn');
+            if (addBtn) {
+                addBtn.addEventListener('click', function() {
+                    setTimeout(() => {
+                        if (selectedFlag) {
+                            selectedFlag.innerHTML = '<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><circle cx="256" cy="256" r="256" fill="#4a90e2"/><text x="256" y="320" font-size="200" text-anchor="middle" fill="white">🌐</text></svg>';
+                        }
+                        if (selectedText) selectedText.textContent = '-- Choose a language --';
+                        document.querySelectorAll('.dropdown-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                    }, 500);
+                });
+            }
+
+            console.log('✅ Custom dropdown initialized');
+        })();
         </script>
         <?php
     }
