@@ -1,0 +1,427 @@
+/**
+ * Public Styles for WP Hreflang Manager
+ *
+ * @package WP_Hreflang_Manager
+ */
+
+/* General Switcher Styles */
+.wp-hreflang-switcher {
+    display: inline-block;
+    margin: 10px 0;
+}
+
+/* SVG Flag Styles */
+img.flag-svg {
+    display: inline-block !important;
+    width: 20px !important;
+    height: 20px !important;
+    object-fit: cover !important;
+    border-radius: 2px !important;
+    vertical-align: middle !important;
+}
+
+/* Dropdown Style */
+.wp-hreflang-dropdown {
+    position: relative;
+}
+
+/* Custom Dropdown */
+.wp-hreflang-custom-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.wp-hreflang-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.wp-hreflang-dropdown-trigger:hover {
+    border-color: #2271b1;
+}
+
+.wp-hreflang-dropdown-trigger.active {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+.wp-hreflang-current-flag {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+}
+
+.wp-hreflang-current-flag img.flag-svg {
+    width: 22px !important;
+    height: 22px !important;
+}
+
+.wp-hreflang-current-name {
+    flex: 1;
+    font-size: 14px;
+}
+
+.wp-hreflang-dropdown-arrow {
+    font-size: 10px;
+    color: #666;
+    transition: transform 0.3s ease;
+}
+
+.wp-hreflang-dropdown-trigger.active .wp-hreflang-dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.wp-hreflang-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 4px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.wp-hreflang-dropdown-menu.active {
+    max-height: 300px;
+    opacity: 1;
+    overflow-y: auto;
+}
+
+.wp-hreflang-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.wp-hreflang-dropdown-item:hover {
+    background: #f0f0f0;
+}
+
+.wp-hreflang-dropdown-item.wp-hreflang-current {
+    background: #e7f3ff;
+    font-weight: 600;
+}
+
+.wp-hreflang-item-flag {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+}
+
+.wp-hreflang-item-flag img.flag-svg {
+    width: 22px !important;
+    height: 22px !important;
+}
+
+.wp-hreflang-item-name {
+    font-size: 14px;
+}
+
+/* Old select dropdown (fallback/legacy) */
+.wp-hreflang-dropdown select.wp-hreflang-select {
+    padding: 8px 30px 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%206l5%205%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%23555%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 12px;
+    min-width: 150px;
+    transition: border-color 0.3s ease;
+}
+
+.wp-hreflang-dropdown select.wp-hreflang-select:hover {
+    border-color: #999;
+}
+
+.wp-hreflang-dropdown select.wp-hreflang-select:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+/* List Style */
+.wp-hreflang-list {
+    display: block;
+}
+
+.wp-hreflang-list ul.wp-hreflang-list-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.wp-hreflang-list ul.wp-hreflang-list-items li {
+    margin: 0;
+    padding: 0;
+}
+
+.wp-hreflang-list ul.wp-hreflang-list-items li a.wp-hreflang-link {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 14px;
+}
+
+.wp-hreflang-list ul.wp-hreflang-list-items li a.wp-hreflang-link:hover {
+    background-color: #e0e0e0;
+    color: #000;
+}
+
+.wp-hreflang-list ul.wp-hreflang-list-items li.wp-hreflang-current a.wp-hreflang-link {
+    background-color: #2271b1;
+    color: #fff;
+    font-weight: 600;
+}
+
+.wp-hreflang-list ul.wp-hreflang-list-items li.wp-hreflang-current a.wp-hreflang-link:hover {
+    background-color: #135e96;
+    color: #fff;
+}
+
+/* Flags Style */
+.wp-hreflang-flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.wp-hreflang-flags a.wp-hreflang-flag {
+    display: inline-block;
+    font-size: 24px;
+    text-decoration: none;
+    opacity: 0.6;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    line-height: 1;
+}
+
+.wp-hreflang-flags img.flag-svg {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 4px !important;
+}
+
+.wp-hreflang-flags a.wp-hreflang-flag:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.wp-hreflang-flags a.wp-hreflang-flag.wp-hreflang-current {
+    opacity: 1;
+    transform: scale(1.2);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* Widget Styles */
+.widget .wp-hreflang-switcher {
+    display: block;
+    width: 100%;
+}
+
+.widget .wp-hreflang-dropdown select.wp-hreflang-select {
+    width: 100%;
+}
+
+.widget .wp-hreflang-list ul.wp-hreflang-list-items {
+    flex-direction: column;
+    gap: 5px;
+}
+
+.widget .wp-hreflang-list ul.wp-hreflang-list-items li a.wp-hreflang-link {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.widget .wp-hreflang-flags {
+    justify-content: center;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    /* Smaller flags on mobile */
+    .wp-hreflang-current-flag img.flag-svg,
+    .wp-hreflang-item-flag img.flag-svg {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    .wp-hreflang-flags img.flag-svg {
+        width: 28px !important;
+        height: 28px !important;
+    }
+
+    /* Adjust dropdown trigger */
+    .wp-hreflang-dropdown-trigger {
+        padding: 6px 10px;
+        min-width: 120px;
+    }
+
+    .wp-hreflang-current-name {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Even smaller on very small screens */
+    .wp-hreflang-current-flag img.flag-svg,
+    .wp-hreflang-item-flag img.flag-svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    .wp-hreflang-flags img.flag-svg {
+        width: 24px !important;
+        height: 24px !important;
+    }
+
+    .wp-hreflang-dropdown-trigger {
+        padding: 5px 8px;
+        min-width: 100px;
+        gap: 6px;
+    }
+
+    .wp-hreflang-current-name {
+        font-size: 12px;
+    }
+
+    .wp-hreflang-item-name {
+        font-size: 13px;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .wp-hreflang-list ul.wp-hreflang-list-items {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .wp-hreflang-list ul.wp-hreflang-list-items li a.wp-hreflang-link {
+        display: block;
+        text-align: center;
+    }
+
+    .wp-hreflang-flags {
+        justify-content: center;
+    }
+
+    .wp-hreflang-dropdown select.wp-hreflang-select {
+        width: 100%;
+        max-width: 250px;
+    }
+}
+
+/* Loading State */
+.wp-hreflang-switcher.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Accessibility */
+.wp-hreflang-link:focus,
+.wp-hreflang-select:focus,
+.wp-hreflang-flag:focus {
+    outline: 2px solid #2271b1;
+    outline-offset: 2px;
+}
+
+/* RTL Support */
+html[dir="rtl"] .wp-hreflang-dropdown select.wp-hreflang-select {
+    background-position: left 8px center;
+    padding: 8px 12px 8px 30px;
+}
+
+/* Menu Integration Styles */
+.menu-item-language-switcher {
+    display: flex;
+    align-items: center;
+}
+
+.menu-item-language-switcher .wp-hreflang-switcher {
+    margin: 0;
+}
+
+.menu-item-language-switcher .wp-hreflang-dropdown select.wp-hreflang-select {
+    padding: 6px 25px 6px 10px;
+    font-size: 13px;
+    min-width: 120px;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Horizontal menu alignment */
+.menu > .menu-item-language-switcher {
+    position: relative;
+}
+
+/* Vertical alignment for sidebar menus */
+.sidebar .menu-item-language-switcher,
+.widget_nav_menu .menu-item-language-switcher {
+    display: block;
+}
+
+.sidebar .menu-item-language-switcher .wp-hreflang-dropdown select.wp-hreflang-select,
+.widget_nav_menu .menu-item-language-switcher .wp-hreflang-dropdown select.wp-hreflang-select {
+    width: 100%;
+}
+
+/* List style in menu */
+.menu-item-language-switcher .wp-hreflang-list ul.wp-hreflang-list-items {
+    flex-direction: row;
+    gap: 5px;
+}
+
+/* Flags style in menu */
+.menu-item-language-switcher .wp-hreflang-flags {
+    gap: 5px;
+}
+
+.menu-item-language-switcher .wp-hreflang-flags a.wp-hreflang-flag {
+    font-size: 20px;
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+    .menu-item-language-switcher .wp-hreflang-dropdown select.wp-hreflang-select {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .menu-item-language-switcher .wp-hreflang-dropdown select.wp-hreflang-select:hover {
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+}
